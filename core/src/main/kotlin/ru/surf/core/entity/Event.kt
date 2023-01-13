@@ -1,0 +1,61 @@
+package ru.surf.core.entity
+
+import org.hibernate.Hibernate
+import javax.persistence.*
+
+@Table(name = "events")
+@Entity
+class Event(
+
+    @Column(name = "about")
+    internal var description: String = "",
+
+    @Column(name = "candidates_number")
+    var candidatesAmount: Int = 0,
+
+    @Column(name = "trainees_number")
+    var traineesAmount: Int = 0,
+
+    @Column(name = "offers_number")
+    var offersAmount: Int = 0,
+
+    @ManyToOne(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_type_id", referencedColumnName = "id")
+    val eventType: EventType = EventType(),
+
+    @ManyToOne(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_initiator_id", referencedColumnName = "id")
+    val eventInitiator: SurfEmployee = SurfEmployee(),
+
+    @ManyToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "events")
+    val candidates: List<Candidate> = mutableListOf(),
+
+    @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "event")
+    val trainees: List<Trainee> = emptyList(),
+
+    @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "event")
+    val statesEvents: List<StatesEvents> = emptyList(),
+
+) {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    var id: Long = 0
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as Event
+
+        return id != null && id == other.id
+    }
+
+    override fun hashCode(): Int = javaClass.hashCode()
+
+    @Override
+    override fun toString(): String {
+        return this::class.simpleName + "(id = $id , description = $description , candidatesAmount = $candidatesAmount , traineesAmount = $traineesAmount , offersAmount = $offersAmount )"
+    }
+
+}
