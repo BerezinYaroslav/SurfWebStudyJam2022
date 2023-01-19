@@ -1,20 +1,25 @@
 package ru.surf.core.entity
 
-import org.hibernate.Hibernate
+import ru.surf.core.entity.base.UUIDBasedEntity
+import java.util.*
 import javax.persistence.*
 
 @Table(name = "teams")
 @Entity
 class Team(
 
+    @Id
+    @Column(name = "id")
+    override val id: UUID = UUID.randomUUID(),
+
     @Column(name = "about")
-    var description: String = "",
+    var description: String? = null,
 
     @Column(name = "project_git_link")
-    val projectGitLink: String = "",
+    val projectGitLink: String? = null,
 
     @Column(name = "project_miro_link")
-    val projectMiroLink: String = "",
+    val projectMiroLink: String? = null,
 
     @OneToOne(cascade = [CascadeType.REFRESH], fetch = FetchType.EAGER)
     @JoinColumn(name = "mentor_id", referencedColumnName = "id")
@@ -23,22 +28,7 @@ class Team(
     @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "team")
     val feedbacks: List<TeamFeedback> = emptyList(),
 
-) {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    val id: Long = 0
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-        other as Team
-
-        return id != null && id == other.id
-    }
-
-    override fun hashCode(): Int = javaClass.hashCode()
+    ) : UUIDBasedEntity(id) {
 
     @Override
     override fun toString(): String {

@@ -1,23 +1,28 @@
 package ru.surf.core.entity
 
-import org.hibernate.Hibernate
+import ru.surf.core.entity.base.UUIDBasedEntity
+import java.util.*
 import javax.persistence.*
 
 @Table(name = "events")
 @Entity
 class Event(
 
+    @Id
+    @Column(name = "id")
+    override val id: UUID = UUID.randomUUID(),
+
     @Column(name = "about")
-    internal var description: String = "",
+    var description: String? = null,
 
     @Column(name = "candidates_number")
-    var candidatesAmount: Int = 0,
+    var candidatesAmount: Int? = null,
 
     @Column(name = "trainees_number")
-    var traineesAmount: Int = 0,
+    var traineesAmount: Int? = null,
 
     @Column(name = "offers_number")
-    var offersAmount: Int = 0,
+    var offersAmount: Int? = null,
 
     @ManyToOne(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY)
     @JoinColumn(name = "event_type_id", referencedColumnName = "id")
@@ -27,31 +32,13 @@ class Event(
     @JoinColumn(name = "event_initiator_id", referencedColumnName = "id")
     val eventInitiator: SurfEmployee = SurfEmployee(),
 
-    @ManyToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "events")
-    val candidates: List<Candidate> = mutableListOf(),
-
     @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "event")
     val trainees: List<Trainee> = emptyList(),
 
     @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "event")
     val statesEvents: List<StatesEvents> = emptyList(),
 
-) {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    var id: Long = 0
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-        other as Event
-
-        return id != null && id == other.id
-    }
-
-    override fun hashCode(): Int = javaClass.hashCode()
+    ) : UUIDBasedEntity(id) {
 
     @Override
     override fun toString(): String {

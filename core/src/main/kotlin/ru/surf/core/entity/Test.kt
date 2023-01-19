@@ -1,19 +1,23 @@
 package ru.surf.core.entity
 
-import org.hibernate.Hibernate
-import java.time.LocalDate
+import ru.surf.core.entity.base.UUIDBasedEntity
 import java.time.LocalDateTime
+import java.util.*
 import javax.persistence.*
 
 @Table(name = "tests")
 @Entity
 class Test(
 
+    @Id
+    @Column(name = "id")
+    override val id: UUID = UUID.randomUUID(),
+
     @Column(name = "link")
-    val link: String = "",
+    val link: String? = null,
 
     @Column(name = "score")
-    val score: Int = 0,
+    val score: Int? = null,
 
     @Column(name = "start_date")
     val startDate: LocalDateTime = LocalDateTime.now(),
@@ -33,24 +37,9 @@ class Test(
     @JoinTable(name = "tests_questions",
         joinColumns = [JoinColumn(name = "test_id")],
         inverseJoinColumns = [JoinColumn(name = "question_id")])
-    val questions: List<Question> = mutableListOf(),
+    val questions: Set<Question> = mutableSetOf()
 
-) {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    var id: Long = 0
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-        other as Test
-
-        return id != null && id == other.id
-    }
-
-    override fun hashCode(): Int = javaClass.hashCode()
+) : UUIDBasedEntity(id) {
 
     @Override
     override fun toString(): String {

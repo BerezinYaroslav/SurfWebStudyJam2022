@@ -1,6 +1,7 @@
 package ru.surf.core.entity
 
-import org.hibernate.Hibernate
+import ru.surf.core.entity.base.UUIDBasedEntity
+import java.util.*
 import javax.persistence.*
 
 
@@ -8,32 +9,21 @@ import javax.persistence.*
 @Entity
 class Answer(
 
+    @Id
+    @Column(name = "id")
+    override val id: UUID = UUID.randomUUID(),
+
     @Column(name = "answer")
     var text: String = "",
 
     @ManyToMany(mappedBy = "answers", fetch = FetchType.LAZY)
-    val questions: List<Question> = mutableListOf(),
+    val questions: Set<Question> = mutableSetOf()
 
-) {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    val id: Long = 0
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-        other as Answer
-
-        return id != null && id == other.id
-    }
-
-    override fun hashCode(): Int = javaClass.hashCode()
+    ) : UUIDBasedEntity(id) {
 
     @Override
     override fun toString(): String {
         return this::class.simpleName + "(id = $id , text = $text )"
     }
-
+    
 }

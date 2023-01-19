@@ -1,12 +1,17 @@
 package ru.surf.core.entity
 
-import org.hibernate.Hibernate
+import ru.surf.core.entity.base.UUIDBasedEntity
 import java.time.LocalDate
+import java.util.*
 import javax.persistence.*
 
 @Table(name = "teams_feedbacks")
 @Entity
 class TeamFeedback(
+
+    @Id
+    @Column(name = "id")
+    override val id: UUID = UUID.randomUUID(),
 
     @Column(name = "comment")
     var comment: String = "",
@@ -25,22 +30,7 @@ class TeamFeedback(
     @JoinColumn(name = "team_id")
     val team: Team = Team(),
 
-) {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    var id: Long = 0
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-        other as TeamFeedback
-
-        return id != null && id == other.id
-    }
-
-    override fun hashCode(): Int = javaClass.hashCode()
+    ) : UUIDBasedEntity(id) {
 
     @Override
     override fun toString(): String {

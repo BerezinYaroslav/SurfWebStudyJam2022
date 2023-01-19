@@ -1,14 +1,20 @@
 package ru.surf.core.entity
 
 import org.hibernate.Hibernate
+import ru.surf.core.entity.base.UUIDBasedEntity
+import java.util.*
 import javax.persistence.*
 
 @Table(name = "trainees")
 @Entity
 class Trainee(
 
+    @Id
+    @Column(name = "id")
+    override val id: UUID = UUID.randomUUID(),
+
     @Column(name = "score")
-    var score: Int = 0,
+    var score: Int? = null,
 
     @Column(name = "is_active")
     var isActive: Boolean = false,
@@ -32,27 +38,11 @@ class Trainee(
     @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "traineeReceiver")
     val trainees: List<TraineeFeedback> = emptyList(),
 
-) {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    val id: Long = 0
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-        other as Trainee
-
-        return id != null && id == other.id
-    }
-
-    override fun hashCode(): Int = javaClass.hashCode()
+    ) : UUIDBasedEntity(id) {
 
     @Override
     override fun toString(): String {
         return this::class.simpleName + "(id = $id , score = $score , isActive = $isActive )"
     }
-
 
 }

@@ -1,38 +1,28 @@
 package ru.surf.core.entity
 
-import org.hibernate.Hibernate
+import ru.surf.core.entity.base.UUIDBasedEntity
+import java.util.*
 import javax.persistence.*
 
 @Table(name = "accounts")
 @Entity
 class Account(
 
+    @Id
+    @Column(name = "id")
+    override val id: UUID = UUID.randomUUID(),
+
     @Column(name = "email")
     var email: String = "",
 
     @Column(name = "password")
-    var password: String = "",
+    var password: String? = null,
 
-    @ManyToOne(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY)
+    @ManyToOne(cascade = [CascadeType.REFRESH], fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     val role: Role = Role(),
 
-) {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    val id: Long = 0
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-        other as Account
-
-        return id != null && id == other.id
-    }
-
-    override fun hashCode(): Int = javaClass.hashCode()
+    ) : UUIDBasedEntity(id) {
 
     @Override
     override fun toString(): String {
