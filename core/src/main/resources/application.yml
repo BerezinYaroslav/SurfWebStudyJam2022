@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/surf_db
+    url: jdbc:postgresql://localhost:5444/surf_db
     username: postgres
-    password: revanZ12345
+    password: revan12345
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
