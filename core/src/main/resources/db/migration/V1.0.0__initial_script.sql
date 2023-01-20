@@ -9,16 +9,15 @@ create table if not exists accounts
     id       uuid default gen_random_uuid() primary key,
     email    text not null unique,
     password text unique,
-    role_id  uuid references roles (id)
-        constraint accounts_roles_role_id_fk
+    role_id  uuid constraint accounts_roles_role_id_fk references roles (id)
 );
 
 create table if not exists surf_employees
 (
     id         uuid default gen_random_uuid() primary key,
     name       text not null,
-    account_id uuid references accounts (id)
-        constraint surf_employees_accounts_account_id_fk
+    account_id uuid constraint surf_employees_accounts_account_id_fk references accounts (id)
+
 );
 
 
@@ -41,19 +40,16 @@ create table if not exists events
     candidates_number  integer,
     trainees_number    integer,
     offers_number      integer,
-    event_type_id      uuid references event_types (id)
-        constraint events_event_types_event_type_id_fk,
-    event_initiator_id uuid references surf_employees (id)
-        constraint events_surf_employees_event_initiator_id_fk
+    event_type_id      uuid  constraint events_event_types_event_type_id_fk references event_types (id),
+    event_initiator_id uuid  constraint events_surf_employees_event_initiator_id_fk references surf_employees (id)
+
 );
 
 create table if not exists states_events
 (
     id       uuid default gen_random_uuid() primary key,
-    state_id uuid references state_types (id)
-        constraint states_events_state_types_state_id_fk,
-    event_id uuid references events (id)
-        constraint states_events_events_event_id_fk,
+    state_id uuid constraint states_events_state_types_state_id_fk references state_types (id),
+    event_id uuid constraint states_events_events_event_id_fk references events (id),
     date     date not null
 );
 
@@ -63,16 +59,14 @@ create table if not exists candidates
     name       text not null,
     email      text not null unique,
     is_new     boolean,
-    hr_from_id uuid references surf_employees (id)
-        constraint candidates_surf_employees_hr_from_id_fk
+    hr_from_id uuid constraint candidates_surf_employees_hr_from_id_fk references surf_employees (id)
+
 );
 
 create table if not exists candidates_events
 (
-    candidate_id uuid references candidates (id)
-        constraint candidates_events_candidates_candidate_id_fk,
-    event_id     uuid references events (id)
-        constraint candidates_events_events_event_id_fk,
+    candidate_id uuid  constraint candidates_events_candidates_candidate_id_fk references candidates (id),
+    event_id     uuid  constraint candidates_events_events_event_id_fk references events (id),
     primary key (event_id, candidate_id)
 );
 
@@ -83,17 +77,14 @@ create table if not exists teams
     about             text unique,
     project_git_link  text unique,
     project_miro_link text unique,
-    mentor_id         bigint references surf_employees (id)
-        constraint teams_surf_employees_mentor_id_fk
+    mentor_id         uuid constraint teams_surf_employees_mentor_id_fk references surf_employees (id)
 );
 
 create table if not exists teams_feedbacks
 (
     id            uuid default gen_random_uuid() primary key,
-    mentor_id     uuid references surf_employees (id)
-        constraint teams_feedbacks_surf_employees_mentor_id_fk,
-    team_id       uuid references teams (id)
-        constraint teams_feedbacks_teams_team_id_fk,
+    mentor_id     uuid constraint teams_feedbacks_surf_employees_mentor_id_fk references surf_employees (id),
+    team_id       uuid constraint teams_feedbacks_teams_team_id_fk references teams (id),
     comment       text    not null unique,
     score         integer not null,
     feedback_date date    not null
@@ -104,14 +95,10 @@ create table if not exists trainees
     id           uuid default gen_random_uuid() primary key,
     score        integer,
     is_active    boolean not null,
-    event_id     uuid references events (id)
-        constraint trainees_events_event_id_fk,
-    candidate_id uuid references candidates (id)
-        constraint trainees_candidates_candidate_id_fk,
-    account_id   uuid references accounts (id)
-        constraint trainees_accounts_account_id_fk,
-    team_id      uuid references teams (id)
-        constraint trainees_teams_team_id_fk
+    event_id     uuid  constraint trainees_events_event_id_fk references events (id),
+    candidate_id uuid  constraint trainees_candidates_candidate_id_fk references candidates (id),
+    account_id   uuid  constraint trainees_accounts_account_id_fk references accounts (id),
+    team_id      uuid  constraint trainees_teams_team_id_fk references teams (id)
 );
 
 create table if not exists trainees_feedbacks
@@ -120,10 +107,8 @@ create table if not exists trainees_feedbacks
     score            integer not null,
     comment          text    not null unique,
     date             date    not null,
-    surf_employee_id uuid references surf_employees (id)
-        constraint trainees_feedbacks_surf_employees_surf_employee_id_fk,
-    trainee_id       uuid references surf_employees (id)
-        constraint trainees_feedbacks_surf_employees_trainee_id_fk
+    surf_employee_id uuid  constraint trainees_feedbacks_surf_employees_surf_employee_id_fk references surf_employees (id),
+    trainee_id       uuid  constraint trainees_feedbacks_surf_employees_trainee_id_fk references surf_employees (id)
 );
 
 
@@ -134,10 +119,8 @@ create table if not exists tests
     score        integer,
     start_date   timestamp not null,
     end_date     timestamp not null,
-    candidate_id uuid references candidates (id)
-        constraint tests_candidates_candidate_id_fk,
-    event_id     uuid references events (id)
-        constraint tests_events_event_id_fk
+    candidate_id uuid   constraint tests_candidates_candidate_id_fk references candidates (id),
+    event_id     uuid   constraint tests_events_event_id_fk references events (id)
 );
 
 create table if not exists question_types
@@ -156,26 +139,20 @@ create table if not exists questions
 (
     id               uuid default gen_random_uuid() primary key,
     question         text unique,
-    question_type_id uuid references question_types (id)
-        constraint questions_question_types_question_type_id_fk,
-    right_answer_id  uuid references answers (id)
-        constraint questions_answers_right_answer_id_fk
+    question_type_id uuid constraint questions_question_types_question_type_id_fk references question_types (id),
+    right_answer_id  uuid constraint questions_answers_right_answer_id_fk references answers (id)
 );
 
 create table if not exists questions_answers
 (
-    question_id uuid references questions (id)
-        constraint questions_answers_questions_question_id_fk,
-    answer_id   uuid references answers (id)
-        constraint questions_answers_answers_answer_id_fk,
+    question_id uuid constraint questions_answers_questions_question_id_fk references questions (id),
+    answer_id   uuid constraint questions_answers_answers_answer_id_fk references answers (id),
     primary key (question_id, answer_id)
 );
 
 create table if not exists tests_questions
 (
-    test_id     uuid references tests (id)
-        constraint tests_questions_tests_test_id_fk,
-    question_id uuid references questions (id)
-        constraint tests_questions_questions_question_id_fk,
+    test_id     uuid  constraint tests_questions_tests_test_id_fk references tests (id),
+    question_id uuid  constraint tests_questions_questions_question_id_fk references questions (id),
     primary key (test_id, question_id)
 );
