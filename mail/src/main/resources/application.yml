@@ -1,2 +1,16 @@
 server:
   port: 8083
+
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: studyjam.2023@gmail.com
+    password: "nykbimyzpfzdplti"
+    test-connection: true
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
