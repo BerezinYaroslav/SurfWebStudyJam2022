@@ -51,6 +51,8 @@ class EventServiceImpl(
             eventType = eventTypeService.getEventType(putRequestEventDto.eventTypeId)
             eventInitiator = surfEmployeeService.getSurfEmployee(putRequestEventDto.eventInitiatorId)
             trainees = traineesList
+            //TODO: сделать состояния
+            /*statesEvents = ..*/
         }
         val persistedEvent = eventRepository.save(eventFromDb)
         return eventMapper.convertFromEventEntityToShortResponseEventDto(persistedEvent)

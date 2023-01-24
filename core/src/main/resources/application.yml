@@ -1,6 +1,7 @@
 server:
   port: 8080
-
+  servlet:
+    context-path: /api
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5444/surf_db
@@ -14,4 +15,7 @@ spring:
     properties:
       hibernate.format_sql: true
   flyway:
+    enabled: true
+springdoc:
+  swagger-ui:
     enabled: true
