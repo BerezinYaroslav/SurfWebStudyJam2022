@@ -8,7 +8,6 @@ import ru.surf.core.dto.PutRequestEventDto
 import ru.surf.core.dto.ShortResponseEventDto
 import ru.surf.core.mapper.EventMapper
 import ru.surf.core.repository.EventRepository
-import ru.surf.core.repository.TraineeRepository
 import ru.surf.core.service.EventService
 import ru.surf.core.service.EventTypeService
 import ru.surf.core.service.SurfEmployeeService
@@ -21,7 +20,6 @@ class EventServiceImpl(
     private val eventRepository: EventRepository,
     private val eventTypeService: EventTypeService,
     private val surfEmployeeService: SurfEmployeeService,
-    private val traineeRepository: TraineeRepository
 ) : EventService {
 
     override fun createEvent(postRequestEventDto: PostRequestEventDto) {
@@ -41,8 +39,6 @@ class EventServiceImpl(
 
     override fun updateEvent(id: UUID, putRequestEventDto: PutRequestEventDto): ShortResponseEventDto {
         val eventFromDb = eventRepository.findByIdOrNull(id) ?: throw NoSuchElementException()
-        val filteredIds = putRequestEventDto.traineesIds.filterNotNull()
-        val traineesList = traineeRepository.findTraineesByIdIn(filteredIds)
         eventFromDb.apply {
             description = putRequestEventDto.description
             candidatesAmount = putRequestEventDto.candidatesAmount
@@ -50,9 +46,6 @@ class EventServiceImpl(
             traineesAmount = putRequestEventDto.traineesAmount
             eventType = eventTypeService.getEventType(putRequestEventDto.eventTypeId)
             eventInitiator = surfEmployeeService.getSurfEmployee(putRequestEventDto.eventInitiatorId)
-            trainees = traineesList
-            //TODO: сделать состояния
-            /*statesEvents = ..*/
         }
         val persistedEvent = eventRepository.save(eventFromDb)
         return eventMapper.convertFromEventEntityToShortResponseEventDto(persistedEvent)

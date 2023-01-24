@@ -8,7 +8,6 @@ data class PutRequestEventDto(
     val traineesAmount: Int?,
     val offersAmount: Int?,
     val eventTypeId: UUID,
-    val eventInitiatorId: UUID,
-    val traineesIds: List<UUID?>
+    val eventInitiatorId: UUID
 ) {
 }
