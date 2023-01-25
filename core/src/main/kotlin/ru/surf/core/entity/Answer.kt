@@ -17,7 +17,7 @@ class Answer(
     var text: String = "",
 
     @ManyToMany(mappedBy = "answers", fetch = FetchType.LAZY)
-    val questions: Set<Question> = mutableSetOf()
+    var questions: MutableSet<Question> = mutableSetOf()
 
     ) : UUIDBasedEntity(id) {
 
@@ -25,5 +25,5 @@ class Answer(
     override fun toString(): String {
         return this::class.simpleName + "(id = $id , text = $text )"
     }
-    
+
 }

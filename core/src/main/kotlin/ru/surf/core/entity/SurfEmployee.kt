@@ -17,16 +17,16 @@ class SurfEmployee(
 
     @OneToOne(cascade = [CascadeType.REFRESH], fetch = FetchType.EAGER)
     @JoinColumn(name = "account_id", referencedColumnName = "id")
-    val account: Account = Account(),
+    var account: Account = Account(),
 
     @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "eventInitiator")
-    val events: List<Event> = emptyList(),
+    var events: MutableList<Event> = mutableListOf(),
 
     @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "ownerFeedback")
-    val feedbacksForTrainee: List<TraineeFeedback> = emptyList(),
+    var feedbacksForTrainee: MutableList<TraineeFeedback> = mutableListOf(),
 
     @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "mentor")
-    val feedbacksForTeam: List<TeamFeedback> = emptyList(),
+    var feedbacksForTeam: MutableList<TeamFeedback> = mutableListOf(),
 
     ) : UUIDBasedEntity(id) {
 

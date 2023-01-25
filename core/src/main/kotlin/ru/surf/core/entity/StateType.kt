@@ -13,10 +13,10 @@ class StateType(
     override val id: UUID = UUID.randomUUID(),
 
     @Column(name = "type")
-    val type: String = "",
+    var type: String = "",
 
     @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "stateType")
-    val statesEvents: List<StatesEvents> = emptyList(),
+    var statesEvents: MutableList<StatesEvents> = mutableListOf(),
 
     ) : UUIDBasedEntity(id) {
 

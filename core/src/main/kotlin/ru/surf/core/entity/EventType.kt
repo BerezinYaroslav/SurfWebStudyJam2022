@@ -16,7 +16,7 @@ class EventType(
     var description: String = "",
 
     @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "eventType")
-    val events: List<Event> = emptyList(),
+    var events: MutableList<Event> = mutableListOf(),
 
     ) : UUIDBasedEntity(id) {
 

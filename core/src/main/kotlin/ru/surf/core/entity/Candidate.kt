@@ -23,16 +23,18 @@ class Candidate(
 
     @ManyToOne(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY)
     @JoinColumn(name = "hr_from_id", referencedColumnName = "id")
-    val hr: SurfEmployee = SurfEmployee(),
+    var hr: SurfEmployee = SurfEmployee(),
 
     @ManyToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY)
-    @JoinTable(name = "candidates_events",
+    @JoinTable(
+        name = "candidates_events",
         joinColumns = [JoinColumn(name = "event_id")],
-        inverseJoinColumns = [JoinColumn(name = "candidate_id")])
-    val events: Set<Event> = mutableSetOf(),
+        inverseJoinColumns = [JoinColumn(name = "candidate_id")]
+    )
+    var events: MutableSet<Event> = mutableSetOf(),
 
     @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "candidate")
-    val trainees: List<Trainee> = emptyList(),
+    var trainees: MutableList<Trainee> = mutableListOf(),
 
     ) : UUIDBasedEntity(id) {
 

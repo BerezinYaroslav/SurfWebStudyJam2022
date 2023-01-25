@@ -16,9 +16,9 @@ class Role(
     var description: String = "",
 
     @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "role")
-    val accounts: List<Account> = mutableListOf(),
+    var accounts: MutableList<Account> = mutableListOf(),
 
-) : UUIDBasedEntity(id) {
+    ) : UUIDBasedEntity(id) {
 
     @Override
     override fun toString(): String {

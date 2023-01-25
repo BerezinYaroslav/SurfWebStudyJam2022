@@ -13,10 +13,10 @@ class QuestionType(
     override val id: UUID = UUID.randomUUID(),
 
     @Column(name = "type")
-    val type: String = "",
+    var type: String = "",
 
     @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "type")
-    val questions: List<Question> = emptyList(),
+    var questions: MutableList<Question> = mutableListOf(),
 
     ) : UUIDBasedEntity(id) {
 
