@@ -1,3 +1,5 @@
 package ru.surf.core.dto
 
-data class ShortResponseEventDto(val description: String)
+import java.util.UUID
+
+data class ShortResponseEventDto(val id: UUID)

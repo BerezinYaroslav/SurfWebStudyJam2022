@@ -22,14 +22,15 @@ class EventServiceImpl(
     private val surfEmployeeService: SurfEmployeeService,
 ) : EventService {
 
-    override fun createEvent(postRequestEventDto: PostRequestEventDto) {
+    override fun createEvent(postRequestEventDto: PostRequestEventDto): ShortResponseEventDto {
         val initiatorId = postRequestEventDto.initiatorId
         val eventTypeId = postRequestEventDto.eventTypeId
         val transientEntity = eventMapper.convertFromPostRequestEventDtoToEventEntity(postRequestEventDto).apply {
             eventInitiator = surfEmployeeService.getSurfEmployee(initiatorId)
             eventType = eventTypeService.getEventType(eventTypeId)
         }
-        eventRepository.save(transientEntity)
+        val persistedEvent = eventRepository.save(transientEntity)
+        return eventMapper.convertFromEventEntityToShortResponseEventDto(persistedEvent)
     }
 
     override fun getEvent(id: UUID): FullResponseEventDto {
@@ -46,6 +47,8 @@ class EventServiceImpl(
             traineesAmount = putRequestEventDto.traineesAmount
             eventType = eventTypeService.getEventType(putRequestEventDto.eventTypeId)
             eventInitiator = surfEmployeeService.getSurfEmployee(putRequestEventDto.eventInitiatorId)
+            // TODO: 25.01.2023 Добавить логику потом 
+            /*  statesEvents = TODO()*/
         }
         val persistedEvent = eventRepository.save(eventFromDb)
         return eventMapper.convertFromEventEntityToShortResponseEventDto(persistedEvent)

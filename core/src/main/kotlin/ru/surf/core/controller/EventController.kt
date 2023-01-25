@@ -14,15 +14,15 @@ import java.util.UUID
 class EventController(private val eventService: EventService) {
 
     @PostMapping("/event")
-    fun createEvent(@RequestBody postRequestEventDto: PostRequestEventDto): ResponseEntity<Unit> {
-        eventService.createEvent(postRequestEventDto)
-        return ResponseEntity.ok().build()
+    fun createEvent(@RequestBody postRequestEventDto: PostRequestEventDto): ResponseEntity<ShortResponseEventDto> {
+        val shortResponseEventDto = eventService.createEvent(postRequestEventDto)
+        return ResponseEntity.ok(shortResponseEventDto)
     }
 
     @GetMapping("/{id}")
-    fun getEvent(@PathVariable("id") eventId: UUID): ResponseEntity<FullResponseEventDto> {
-        val getResponseEventDto = eventService.getEvent(eventId)
-        return ResponseEntity.ok(getResponseEventDto)
+    fun getEvent(@PathVariable(name =  "id") eventId: UUID): ResponseEntity<FullResponseEventDto> {
+        val fullResponseEventDto = eventService.getEvent(eventId)
+        return ResponseEntity.ok(fullResponseEventDto)
     }
 
     @PutMapping("/{id}")

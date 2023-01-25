@@ -8,7 +8,7 @@ import java.util.UUID
 
 interface EventService {
 
-    fun createEvent(postRequestEventDto: PostRequestEventDto)
+    fun createEvent(postRequestEventDto: PostRequestEventDto): ShortResponseEventDto
 
     fun deleteEvent(id: UUID)
 

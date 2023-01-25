@@ -19,6 +19,6 @@ class EventMapperImpl : EventMapper {
         FullResponseEventDto(description = event.description ?: "")
 
     override fun convertFromEventEntityToShortResponseEventDto(event: Event): ShortResponseEventDto =
-        ShortResponseEventDto(description = event.description ?: "")
+        ShortResponseEventDto(id = event.id)
 
 }
