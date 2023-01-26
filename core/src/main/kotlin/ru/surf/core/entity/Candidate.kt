@@ -33,9 +33,6 @@ class Candidate(
     )
     var events: MutableSet<Event> = mutableSetOf(),
 
-    @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "candidate")
-    var trainees: MutableList<Trainee> = mutableListOf(),
-
     ) : UUIDBasedEntity(id) {
 
     @Override

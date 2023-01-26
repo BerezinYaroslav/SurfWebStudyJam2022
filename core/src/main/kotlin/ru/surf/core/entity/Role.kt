@@ -15,9 +15,6 @@ class Role(
     @Column(name = "role")
     var description: String = "",
 
-    @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "role")
-    var accounts: MutableList<Account> = mutableListOf(),
-
     ) : UUIDBasedEntity(id) {
 
     @Override

@@ -19,9 +19,6 @@ class Question(
     @JoinColumn(name = "question_type_id")
     var type: QuestionType = QuestionType(),
 
-    @ManyToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "questions")
-    var tests: MutableList<Answer> = mutableListOf(),
-
     @ManyToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY)
     @JoinTable(
         name = "questions_answers",

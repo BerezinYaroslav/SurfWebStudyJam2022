@@ -16,9 +16,6 @@ class Answer(
     @Column(name = "answer")
     var text: String = "",
 
-    @ManyToMany(mappedBy = "answers", fetch = FetchType.LAZY)
-    var questions: MutableSet<Question> = mutableSetOf()
-
     ) : UUIDBasedEntity(id) {
 
     @Override

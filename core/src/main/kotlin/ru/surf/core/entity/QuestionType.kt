@@ -15,9 +15,6 @@ class QuestionType(
     @Column(name = "type")
     var type: String = "",
 
-    @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "type")
-    var questions: MutableList<Question> = mutableListOf(),
-
     ) : UUIDBasedEntity(id) {
 
     @Override

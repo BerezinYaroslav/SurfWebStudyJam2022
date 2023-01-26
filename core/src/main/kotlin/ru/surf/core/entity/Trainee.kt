@@ -35,9 +35,6 @@ class Trainee(
     @JoinColumn(name = "account_id")
     var account: Account = Account(),
 
-    @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "traineeReceiver")
-    var trainees: MutableList<TraineeFeedback> = mutableListOf(),
-
     ) : UUIDBasedEntity(id) {
 
     @Override

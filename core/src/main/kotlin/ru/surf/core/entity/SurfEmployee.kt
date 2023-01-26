@@ -19,15 +19,6 @@ class SurfEmployee(
     @JoinColumn(name = "account_id", referencedColumnName = "id")
     var account: Account = Account(),
 
-    @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "eventInitiator")
-    var events: MutableList<Event> = mutableListOf(),
-
-    @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "ownerFeedback")
-    var feedbacksForTrainee: MutableList<TraineeFeedback> = mutableListOf(),
-
-    @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "mentor")
-    var feedbacksForTeam: MutableList<TeamFeedback> = mutableListOf(),
-
     ) : UUIDBasedEntity(id) {
 
     @Override

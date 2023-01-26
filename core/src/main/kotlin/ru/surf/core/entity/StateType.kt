@@ -15,9 +15,6 @@ class StateType(
     @Column(name = "type")
     var type: String = "",
 
-    @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "stateType")
-    var statesEvents: MutableList<StatesEvents> = mutableListOf(),
-
     ) : UUIDBasedEntity(id) {
 
     @Override
