@@ -6,7 +6,7 @@ import ru.surf.core.dto.FullResponseEventDto
 import ru.surf.core.dto.PostRequestEventDto
 import ru.surf.core.dto.PutRequestEventDto
 import ru.surf.core.dto.ShortResponseEventDto
-import ru.surf.core.exception.CoreServiceException
+import ru.surf.core.exception.event.EventNotFoundByIdException
 import ru.surf.core.mapper.EventMapper
 import ru.surf.core.repository.EventRepository
 import ru.surf.core.service.EventService
@@ -36,13 +36,13 @@ class EventServiceImpl(
 
     override fun getEvent(id: UUID): FullResponseEventDto {
         val eventFromDb = eventRepository.findByIdOrNull(id)
-            ?: throw CoreServiceException.CODE.CS_DATABASE_ERROR.awaken("NO EVENT WITH ID $id")
+            ?: throw EventNotFoundByIdException(id)
         return eventMapper.convertFromEventEntityToFullResponseEventDto(eventFromDb)
     }
 
     override fun updateEvent(id: UUID, putRequestEventDto: PutRequestEventDto): ShortResponseEventDto {
         val eventFromDb = eventRepository.findByIdOrNull(id)
-            ?: throw CoreServiceException.CODE.CS_DATABASE_ERROR.awaken("NO EVENT WITH ID $id")
+            ?: throw throw EventNotFoundByIdException(id)
         eventFromDb.apply {
             description = putRequestEventDto.description
             candidatesAmount = putRequestEventDto.candidatesAmount
@@ -59,7 +59,7 @@ class EventServiceImpl(
 
     override fun deleteEvent(id: UUID) {
         val eventFromDb = eventRepository.findByIdOrNull(id)
-            ?: throw CoreServiceException.CODE.CS_DATABASE_ERROR.awaken("NO EVENT WITH ID $id")
+            ?: throw EventNotFoundByIdException(id)
         eventRepository.deleteById(eventFromDb.id)
     }
 
