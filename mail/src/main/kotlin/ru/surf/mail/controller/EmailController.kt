@@ -12,8 +12,29 @@ import ru.surf.mail.service.EmailService
 class EmailController(
     private val emailService: EmailService
 ) {
-    @PostMapping("/simple")
-    fun sendSimpleEmail(@RequestBody email: SimpleEmail) {
+    @PostMapping("/auth/greeting")
+    fun sendGreeting(@RequestBody email: SimpleEmail) {
+        emailService.sendGreeting(email)
+    }
+
+    @PostMapping("/auth/account/activation")
+    fun sendAccountActivationLink(@RequestBody email: SimpleEmail) {
         emailService.sendMail(email)
     }
+
+    @PostMapping("/testing")
+    fun sendTestLink(@RequestBody email: SimpleEmail) {
+        emailService.sendMail(email)
+    }
+
+    @PostMapping("/testing/result")
+    fun sendTestResult(@RequestBody email: SimpleEmail) {
+        emailService.sendMail(email)
+    }
+
+    @PostMapping("/offer")
+    fun sendOffer(@RequestBody email: SimpleEmail) {
+        emailService.sendMail(email)
+    }
+
 }

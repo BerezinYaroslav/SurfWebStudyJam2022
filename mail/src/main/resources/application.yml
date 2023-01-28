@@ -14,3 +14,8 @@ spring:
           auth: true
           starttls:
             enable: true
+
+  kafka:
+    bootstrap-servers: "localhost:29092"
+    consumer:
+      auto-offset-reset: earliest

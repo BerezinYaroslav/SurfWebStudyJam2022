@@ -23,7 +23,8 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     implementation("org.springframework.boot:spring-boot-starter-mail")
-
+    implementation ("org.springframework.boot:spring-boot-starter-thymeleaf")
+    implementation("org.springframework.kafka:spring-kafka")
 }
 
 tasks.withType<KotlinCompile> {
