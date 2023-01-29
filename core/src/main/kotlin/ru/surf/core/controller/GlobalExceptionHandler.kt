@@ -10,10 +10,10 @@ import java.time.LocalDateTime
 
 
 @RestControllerAdvice
-class CoreGlobalExceptionHandler {
+class GlobalExceptionHandler {
 
     @ExceptionHandler(EventNotFoundByIdException::class)
-    fun databaseException(exception: EventNotFoundByIdException): ResponseEntity<ErrorDto> {
+    fun handleEventNotFoundByIdException(exception: EventNotFoundByIdException): ResponseEntity<ErrorDto> {
         val errorDto = ErrorDto(exception.exceptionType.toString(), exception.message, LocalDateTime.now())
         return ResponseEntity(errorDto, HttpStatus.NOT_FOUND)
     }

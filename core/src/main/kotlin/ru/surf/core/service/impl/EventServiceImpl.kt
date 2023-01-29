@@ -35,14 +35,12 @@ class EventServiceImpl(
     }
 
     override fun getEvent(id: UUID): FullResponseEventDto {
-        val eventFromDb = eventRepository.findByIdOrNull(id)
-            ?: throw EventNotFoundByIdException(id)
+        val eventFromDb = getEventFromDatabase(id)
         return eventMapper.convertFromEventEntityToFullResponseEventDto(eventFromDb)
     }
 
     override fun updateEvent(id: UUID, putRequestEventDto: PutRequestEventDto): ShortResponseEventDto {
-        val eventFromDb = eventRepository.findByIdOrNull(id)
-            ?: throw throw EventNotFoundByIdException(id)
+        val eventFromDb = getEventFromDatabase(id)
         eventFromDb.apply {
             description = putRequestEventDto.description
             candidatesAmount = putRequestEventDto.candidatesAmount
@@ -58,9 +56,12 @@ class EventServiceImpl(
     }
 
     override fun deleteEvent(id: UUID) {
-        val eventFromDb = eventRepository.findByIdOrNull(id)
-            ?: throw EventNotFoundByIdException(id)
+        val eventFromDb = getEventFromDatabase(id)
         eventRepository.deleteById(eventFromDb.id)
     }
+
+    private fun getEventFromDatabase(id: UUID) =
+        eventRepository.findByIdOrNull(id)
+            ?: throw EventNotFoundByIdException(id)
 
 }

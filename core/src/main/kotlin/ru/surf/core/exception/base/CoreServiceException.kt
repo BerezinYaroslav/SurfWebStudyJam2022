@@ -1,6 +1,6 @@
 package ru.surf.core.exception.base
 
-abstract class CoreServiceException : RuntimeException {
+abstract class CoreServiceException: RuntimeException {
 
     protected abstract val description: String
 
