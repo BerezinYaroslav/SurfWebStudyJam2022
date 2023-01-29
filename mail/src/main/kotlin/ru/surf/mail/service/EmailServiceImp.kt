@@ -5,7 +5,7 @@ import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
 import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringTemplateEngine
-import ru.surf.mail.model.SimpleEmail
+import ru.surf.mail.model.Email
 import ru.surf.mail.model.Templates
 import java.nio.charset.StandardCharsets
 import javax.mail.internet.MimeMessage
@@ -16,15 +16,31 @@ class EmailServiceImp(
     private val springTemplateEngine: SpringTemplateEngine
 ) : EmailService {
 
-    override fun sendMail(email: SimpleEmail) {
+    override fun sendMail(email: Email) {
         TODO("Not yet implemented")
     }
 
-    override fun sendGreeting(email: SimpleEmail) {
+    override fun sendGreeting(email: Email) {
         javaMailSender.send(createMimeMessage(email, Templates.GREETING.template))
     }
 
-    private fun createMimeMessage(email: SimpleEmail, templateLocation: String): MimeMessage {
+    override fun sendOffer(email: Email) {
+        javaMailSender.send(createMimeMessage(email, Templates.OFFER.template))
+    }
+
+    override fun sendAccountActivationLink(email: Email) {
+        javaMailSender.send(createMimeMessage(email, Templates.ACCOUNT_ACTIVATION.template))
+    }
+
+    override fun sendTestLink(email: Email) {
+        javaMailSender.send(createMimeMessage(email, Templates.TEST.template))
+    }
+
+    override fun sendTestResult(email: Email) {
+        javaMailSender.send(createMimeMessage(email, Templates.TEST_RESULT.template))
+    }
+
+    private fun createMimeMessage(email: Email, templateLocation: String): MimeMessage {
         val message: MimeMessage = javaMailSender.createMimeMessage()
         val helper = MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name())
         val context = Context()
