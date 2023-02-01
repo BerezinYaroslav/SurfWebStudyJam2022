@@ -62,7 +62,7 @@ create table if not exists states_events
 create table if not exists candidates
 (
     id         uuid default gen_random_uuid() primary key,
-    name       text not null,
+    fio        text not null,
     email      text not null unique,
     is_new     boolean,
     hr_from_id uuid
@@ -185,12 +185,12 @@ create table if not exists tests_questions
 
 create table if not exists s3files
 (
-    id               uuid default gen_random_uuid() primary key,
-    content_type     varchar(255),
-    s3_key           varchar(255) unique,
-    size_in_bytes    bigint,
-    s3_filename      varchar(300) unique,
-    checksum         varchar(255) unique
+    id            uuid default gen_random_uuid() primary key,
+    content_type  varchar(255),
+    s3_key        varchar(255) unique,
+    size_in_bytes bigint,
+    s3_filename   varchar(300) unique,
+    checksum      varchar(255) unique
 );
 
 

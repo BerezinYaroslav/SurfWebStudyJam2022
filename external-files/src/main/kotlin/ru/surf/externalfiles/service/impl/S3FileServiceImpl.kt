@@ -58,9 +58,18 @@ class S3FileServiceImpl(
         } catch (e: Exception) {
             //TODO: поменять исключение
             when (e) {
-                is SdkClientException -> throw RuntimeException()
-                is SQLException -> throw RuntimeException()
-                else -> throw RuntimeException()
+                is SdkClientException -> {
+                    e.printStackTrace()
+                    throw RuntimeException()
+                }
+                is SQLException -> {
+                    e.printStackTrace()
+                    throw RuntimeException()
+                }
+                else -> {
+                    e.printStackTrace()
+                    throw RuntimeException()
+                }
             }
         }
     }
