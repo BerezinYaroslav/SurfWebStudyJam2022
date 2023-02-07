@@ -17,7 +17,8 @@ class ResourceFileServiceImpl(private val s3FileService: S3FileService) : Resour
         val sheet: XSSFSheet = XSSFWorkbook(ByteArrayInputStream(bytes)).getSheet("Кандидаты")
         return (1..sheet.lastRowNum).map { sheet.getRow(it) }.map {
             Candidate(
-                name = it.getCell(0).stringCellValue,
+                //TODO 07.02.2023 Поменялась сущность кандидата, сделать рефакторинг позже.
+                //name = it.getCell(0).stringCellValue,
                 email = it.getCell(4).stringCellValue,
                 isNew = mapExcelBoolean(it.getCell(7).stringCellValue),
             )
