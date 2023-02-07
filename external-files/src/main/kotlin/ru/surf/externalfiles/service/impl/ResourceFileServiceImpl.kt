@@ -3,7 +3,7 @@ package ru.surf.externalfiles.service.impl
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.stereotype.Service
-import ru.surf.externalfiles.entity.Candidate
+import ru.surf.core.entity.Candidate
 import ru.surf.externalfiles.service.ResourceFileService
 import ru.surf.externalfiles.service.S3FileService
 import java.io.ByteArrayInputStream
