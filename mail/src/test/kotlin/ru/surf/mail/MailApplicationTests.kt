@@ -1,47 +1,50 @@
 package ru.surf.mail
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.icegreen.greenmail.configuration.GreenMailConfiguration
-import com.icegreen.greenmail.junit5.GreenMailExtension
-import com.icegreen.greenmail.util.ServerSetup
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.RegisterExtension
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.boot.test.web.server.LocalServerPort
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
-import ru.surf.mail.model.Email
+import org.junit.jupiter.api.extension.RegisterExtension
+import com.icegreen.greenmail.junit5.GreenMailExtension
+import org.junit.jupiter.api.Assertions.assertEquals
+import ru.surf.mail.model.GeneralNotificationDto
+import com.icegreen.greenmail.util.ServerSetup
+import ru.surf.mail.model.TopicTemplate
+import org.junit.jupiter.api.BeforeAll
+import kotlin.concurrent.schedule
+import org.junit.jupiter.api.Test
+import java.util.*
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class MailApplicationTests(
-    @LocalServerPort
-    private val port: Int
-) {
-    @Autowired
-    lateinit var testRestTemplate: TestRestTemplate
-    private val mapper = ObjectMapper()
-
+class MailApplicationTests {
     companion object {
         @RegisterExtension
-        var greenMail = GreenMailExtension(ServerSetup.SMTP)
-            .withConfiguration(GreenMailConfiguration.aConfig().withUser("user", "admin"))
+        var greenMail: GreenMailExtension = GreenMailExtension(ServerSetup.SMTP.withPort(3025)).withConfiguration(
+            GreenMailConfiguration.aConfig().withUser("user", "admin")
+        )
+
+        @JvmStatic
+        @DynamicPropertySource
+        fun kafkaProperties(registry: DynamicPropertyRegistry) {
+            registry.add("spring.kafka.consumer.bootstrap-servers") { KafkaBase.kafkaContainer.bootstrapServers }
+            registry.add("spring.kafka.producer.bootstrap-servers") { KafkaBase.kafkaContainer.bootstrapServers }
+        }
+
+        @JvmStatic
+        @BeforeAll
+        fun setup() {
+            KafkaBase.createTopic(TopicTemplate.SIMPLE_NOTIFICATION_TOPIC)
+        }
     }
 
     @Test
-    fun `send mail`() {
-        val context: MutableMap<String, Any> = mutableMapOf()
-        context["name"] = "Foo"
-        val email = mapper.writeValueAsString(Email("test@mail.com", "Test", context))
+    fun `should send simple email notification`() {
+        val email = GeneralNotificationDto("test_mail@surf.ru", "Simple Notification", mapOf("name" to "Test"))
+        KafkaBase.writeToTopic(email, TopicTemplate.SIMPLE_NOTIFICATION_TOPIC)
 
-        val headers = HttpHeaders()
-        headers.contentType = MediaType.APPLICATION_JSON
-        val emailRequest: HttpEntity<String> = HttpEntity(email, headers)
-
-        val responseEntity = testRestTemplate.postForEntity("http://localhost:${port}/mail/auth/greeting", emailRequest, Void::class.java)
-        assertEquals("Test", greenMail.receivedMessages.first().subject)
+        Timer().schedule(2000) {
+            assertEquals(email.subject, greenMail.receivedMessages.first().subject)
+        }
     }
 }

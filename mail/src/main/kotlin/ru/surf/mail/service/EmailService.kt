@@ -1,12 +1,13 @@
 package ru.surf.mail.service
 
-import ru.surf.mail.model.Email
+import ru.surf.mail.model.GeneralNotificationDto
+
 
 interface EmailService {
-    fun sendMail(email: Email)
-    fun sendGreeting(email: Email)
-    fun sendOffer(email:Email)
-    fun sendAccountActivationLink(email: Email)
-    fun sendTestLink(email: Email)
-    fun sendTestResult(email: Email)
+    fun sendSimpleNotification(email: GeneralNotificationDto)
+    fun sendGreeting(email: GeneralNotificationDto)
+    fun sendOffer(email:GeneralNotificationDto)
+    fun sendAccountActivationLink(email: GeneralNotificationDto)
+    fun sendTestLink(email: GeneralNotificationDto)
+    fun sendTestResult(email: GeneralNotificationDto)
 }
