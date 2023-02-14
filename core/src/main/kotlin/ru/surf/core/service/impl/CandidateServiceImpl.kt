@@ -10,16 +10,17 @@ import ru.surf.auth.service.CredentialsService
 import ru.surf.core.dto.CandidateApprovalDto
 import ru.surf.core.dto.CandidateDto
 import ru.surf.core.dto.CandidatePromotionDto
-import ru.surf.core.dto.GeneralNotificationDto
 import ru.surf.core.entity.Account
 import ru.surf.core.entity.Candidate
 import ru.surf.core.entity.Trainee
+import ru.surf.core.event.ReceivingRequestKafkaEvent
 import ru.surf.core.mapper.candidate.CandidateMapper
 import ru.surf.core.repository.AccountRepository
 import ru.surf.core.repository.CandidateRepository
 import ru.surf.core.repository.EventRepository
 import ru.surf.core.repository.TraineeRepository
 import ru.surf.core.service.CandidateService
+import ru.surf.core.service.EventService
 import ru.surf.core.service.KafkaService
 import ru.surf.externalfiles.service.S3FileService
 import java.util.*
@@ -34,7 +35,8 @@ class CandidateServiceImpl(
     @Autowired private val accountRepository: AccountRepository,
     @Autowired private val traineeRepository: TraineeRepository,
     @Autowired private val candidateMapper: CandidateMapper,
-    @Autowired private val kafkaService: KafkaService
+    @Autowired private val kafkaService: KafkaService,
+    @Autowired private val eventService: EventService
 ) : CandidateService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = [Exception::class])
@@ -55,10 +57,12 @@ class CandidateServiceImpl(
                 flush()
             }
             it.cvFileId = s3FileService.claimFile(candidateDto.cv.fileId) ?: throw Exception("cv file expired")
-            kafkaService.sendGeneralNotificationMessage(
-                GeneralNotificationDto(
-                    candidateDto.email, "Заявка на стажировку",
-                    mapOf("name" to candidateDto.firstName, "surname" to candidateDto.lastName)
+            kafkaService.sendReceivingRequestEvent(
+                ReceivingRequestKafkaEvent(
+                    candidateDto.email,
+                    eventService.getEvent(candidateDto.eventId).description,
+                    firstName = candidateDto.firstName,
+                    lastName = candidateDto.lastName
                 )
             )
         }
