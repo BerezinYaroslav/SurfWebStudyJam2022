@@ -10,10 +10,10 @@ import ru.surf.auth.service.CredentialsService
 import ru.surf.core.dto.CandidateApprovalDto
 import ru.surf.core.dto.CandidateDto
 import ru.surf.core.dto.CandidatePromotionDto
+import ru.surf.core.dto.GeneralNotificationDto
 import ru.surf.core.entity.Account
 import ru.surf.core.entity.Candidate
 import ru.surf.core.entity.Trainee
-import ru.surf.core.event.ReceivingRequestKafkaEvent
 import ru.surf.core.mapper.candidate.CandidateMapper
 import ru.surf.core.repository.AccountRepository
 import ru.surf.core.repository.CandidateRepository
@@ -57,14 +57,7 @@ class CandidateServiceImpl(
                 flush()
             }
             it.cvFileId = s3FileService.claimFile(candidateDto.cv.fileId) ?: throw Exception("cv file expired")
-            kafkaService.sendReceivingRequestEvent(
-                ReceivingRequestKafkaEvent(
-                    candidateDto.email,
-                    eventService.getEvent(candidateDto.eventId).description,
-                    firstName = candidateDto.firstName,
-                    lastName = candidateDto.lastName
-                )
-            )
+            kafkaService.sendReceivingRequestDto(createCandidateNotification(candidateDto))
         }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = [Exception::class])
@@ -117,6 +110,19 @@ class CandidateServiceImpl(
     override fun get(candidateId: UUID): Candidate = candidateRepository.findById(candidateId).orElseThrow {
         // TODO в этой ветке ещё нет кастомных исключений, добавить позже
         Exception("candidate not found")
+    }
+
+    private fun createCandidateNotification(candidateDto: CandidateDto): GeneralNotificationDto {
+        val name = "name"
+        val surname = "surname"
+        return GeneralNotificationDto(
+            emailTo = candidateDto.email,
+            eventName = eventService.getEvent(candidateDto.eventId).description,
+            mapOf(
+                name to candidateDto.firstName,
+                surname to candidateDto.lastName
+            )
+        )
     }
 
 }
