@@ -102,7 +102,7 @@ class S3FileServiceImpl(
     }
 
     override fun claimFile(fileId: UUID): UUID =
-        s3DatabaseService.persistS3File(fileId).id
+        s3DatabaseService.keepS3FileData(fileId).id
 
     @Scheduled(fixedDelayString = "\${external-files.claim-interval-seconds}", timeUnit = TimeUnit.SECONDS)
     override fun cleanUnclaimedFiles() {

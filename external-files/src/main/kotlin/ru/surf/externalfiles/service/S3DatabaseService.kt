@@ -14,7 +14,7 @@ interface S3DatabaseService {
 
     fun getS3FileData(fileId: UUID): S3File
 
-    fun persistS3File(id: UUID): S3File
+    fun keepS3FileData(id: UUID): S3File
 
     fun processExpiredFiles(zonedDateTime: ZonedDateTime, applyFn: (UUID) -> Unit)
 

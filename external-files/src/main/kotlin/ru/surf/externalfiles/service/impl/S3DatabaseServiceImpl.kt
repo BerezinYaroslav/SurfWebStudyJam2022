@@ -55,7 +55,7 @@ class S3DatabaseServiceImpl(
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    override fun persistS3File(id: UUID): S3File = getS3FileData(id).run {
+    override fun keepS3FileData(id: UUID): S3File = getS3FileData(id).run {
         expiresAt = null
         s3FileRepository.save(this)
     }
