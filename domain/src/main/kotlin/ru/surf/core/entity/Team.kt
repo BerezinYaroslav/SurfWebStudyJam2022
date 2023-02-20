@@ -28,6 +28,10 @@ class Team(
         @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY, mappedBy = "team")
         var feedbacks: MutableList<TeamFeedback> = mutableListOf(),
 
+        @ManyToOne(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY)
+        @JoinColumn(name = "event_id", referencedColumnName = "id")
+        var event: Event = Event(),
+
         ) : UUIDBasedEntity(id) {
 
     @Override

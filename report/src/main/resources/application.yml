@@ -1,2 +1,20 @@
 server:
   port: 8082
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5444/surf_db
+    username: postgres
+    password: revan12345
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
+      org.hibernate.envers:
+        audit_table_suffix: _audit
+        revision_type_field_name: revision_type
+        revision_field_name: revision_id
+
