@@ -14,7 +14,7 @@ import ru.surf.core.entity.Account
 import ru.surf.core.entity.Candidate
 import ru.surf.core.entity.EventState
 import ru.surf.core.entity.Trainee
-import ru.surf.core.event.ReceivingRequestKafkaEvent
+import ru.surf.core.kafkaEvents.CandidateAppliedEvent
 import ru.surf.core.mapper.candidate.CandidateMapper
 import ru.surf.core.repository.AccountRepository
 import ru.surf.core.repository.CandidateRepository
@@ -54,17 +54,31 @@ class CandidateServiceImpl(
             candidateRepository.run {
                 save(it)
                 flush()
-            }
-            it.cvFileId = s3FileService.claimFile(candidateDto.cv.fileId)
-            kafkaService.sendReceivingRequestEvent(
-                ReceivingRequestKafkaEvent(
-                    emailTo = it.email,
-                    eventName = it.event.title,
-                    firstName = it.firstName,
-                    lastName = it.lastName
+            candidateMapper.convertFromCandidateDtoToCandidateEntity(
+                    candidateDto,
+                    // todo временно, посмотреть mapstruct
+                    event = eventService.getEvent(candidateDto.eventId).apply {
+                        eventStates.none {
+                            it.stateType != EventState.StateType.APPLYING
+                        } && throw Exception("Candidate application phase has already ended")
+                    }
+            ).also {
+                candidateRepository.run {
+                    save(it)
+                    flush()
+                }
+                it.cvFileId = s3FileService.claimFile(candidateDto.cv.fileId)
+                kafkaService.sendCoreEvent(
+                    CandidateAppliedEvent(
+                            candidateDto.email,
+                            it
+                    )
                 )
-            )
-        }
+//              kafkaService.sendCoreEvent(
+//                   NotMailEventSample(
+//                          "this is some data for other services: " + RandomStringUtils.randomAscii(10)
+//                   )
+//              )
 
     @Suppress("KotlinConstantConditions")
     @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = [Exception::class])
