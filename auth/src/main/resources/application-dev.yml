@@ -1,20 +1,22 @@
 server:
-  port: ${PORT:8085}
+  port: 8085
 
-keycloak:
-  host: ${KEYCLOAK_HOST:localhost:8888}
-  realm: studyjam
-  certs-id: K8aUK_QgRhBJ1mqLCXn5skBShc5PSY1lsLeKZyYboYE
-  client-id: spring
-  client-grant-type: client_credentials
-  client-secret: mjnoLPMym2ZFSkKRKXDV3vnF7yENMKTR
-  user-grant-type: password
+application:
+  keycloak:
+    host: localhost:8888
+    realm: studyjam
 
-  certs-url: http://${keycloak.host}/auth/realms/${keycloak.realm}/protocol/openid-connect/certs
-  token-url: http://${keycloak.host}/auth/realms/${keycloak.realm}/protocol/openid-connect/token
-  user-info-url: http://${keycloak.host}/auth/realms/${keycloak.realm}/protocol/openid-connect/userinfo
-  users-url: http://${keycloak.host}/auth/admin/realms/${keycloak.realm}/users
-  reset-password-url: http://${keycloak.host}/auth/admin/realms/${keycloak.realm}/users/{sub}/reset-password
+    certs-id: ${KEYCLOAK_REALM_CERTS_RS256}
+    client-id: spring
+    client-secret: ${KEYCLOAK_CLIENT_SECRET}
+    client-grant-type: client_credentials
+    user-grant-type: password
+
+    certs-url: http://${application.keycloak.host}/auth/realms/${application.keycloak.realm}/protocol/openid-connect/certs
+    token-url: http://${application.keycloak.host}/auth/realms/${application.keycloak.realm}/protocol/openid-connect/token
+    user-info-url: http://${application.keycloak.host}/auth/realms/${application.keycloak.realm}/protocol/openid-connect/userinfo
+    users-url: http://${application.keycloak.host}/auth/admin/realms/${application.keycloak.realm}/users
+    reset-password-url: http://${application.keycloak.host}/auth/admin/realms/${application.keycloak.realm}/users/{sub}/reset-password
 
 spring:
   datasource:
@@ -26,5 +28,6 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
+    show-sql: true
   h2:
     console.enabled: true
