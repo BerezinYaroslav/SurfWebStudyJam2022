@@ -7,17 +7,16 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.junit.jupiter.api.extension.RegisterExtension
 import com.icegreen.greenmail.junit5.GreenMailExtension
 import org.junit.jupiter.api.Assertions.assertEquals
-import ru.surf.mail.model.GeneralNotificationDto
 import com.icegreen.greenmail.util.ServerSetup
-import ru.surf.mail.model.TopicTemplate
 import org.junit.jupiter.api.BeforeAll
-import kotlin.concurrent.schedule
 import org.junit.jupiter.api.Test
-import java.util.*
+import ru.surf.mail.model.EmailType
+import ru.surf.mail.model.dto.GeneralNotificationDto
 
-
+//@ContextConfiguration(classes = [KafkaTestConfig::class])
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class MailApplicationTests {
+
     companion object {
         @RegisterExtension
         var greenMail: GreenMailExtension = GreenMailExtension(ServerSetup.SMTP.withPort(3025)).withConfiguration(
@@ -34,17 +33,21 @@ class MailApplicationTests {
         @JvmStatic
         @BeforeAll
         fun setup() {
-            KafkaBase.createTopic(TopicTemplate.SIMPLE_NOTIFICATION_TOPIC)
+            KafkaBase.createTopic("core-topics")
         }
     }
 
     @Test
     fun `should send simple email notification`() {
-        val email = GeneralNotificationDto("test_mail@surf.ru", "Simple Notification", mapOf("name" to "Test"))
-        KafkaBase.writeToTopic(email, TopicTemplate.SIMPLE_NOTIFICATION_TOPIC)
+        val email = GeneralNotificationDto(
+            EmailType.ACCEPT_APPLICATION,
+            "test_mail@surf.ru",
+            "Accept application Test",
+            mapOf("firstName" to "FirstName", "lastName" to "LastName", "eventName" to "EventName")
+        )
+        KafkaBase.writeToTopic(email, "core-topics")
 
-        Timer().schedule(2000) {
-            assertEquals(email.subject, greenMail.receivedMessages.first().subject)
-        }
+        Thread.sleep(2000)
+        assertEquals(email.subject, greenMail.receivedMessages.first().subject)
     }
 }

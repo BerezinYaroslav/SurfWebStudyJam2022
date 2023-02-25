@@ -10,7 +10,7 @@ import org.springframework.kafka.core.KafkaAdmin
 import org.springframework.kafka.support.serializer.JsonSerializer
 import org.testcontainers.containers.KafkaContainer
 import org.testcontainers.utility.DockerImageName
-import ru.surf.mail.model.GeneralNotificationDto
+import ru.surf.mail.model.dto.GeneralNotificationDto
 import java.util.*
 
 

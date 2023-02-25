@@ -1,4 +1,7 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
+
   mail:
     username: user
     password: admin
@@ -8,13 +11,11 @@ spring:
 
   kafka:
     producer:
-#      bootstrap-servers: localhost:29092
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         spring.json.add.type.headers: false
     consumer:
-#      bootstrap-servers: localhost:29092
       group-id: some
       auto-offset-reset: earliest
       key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
