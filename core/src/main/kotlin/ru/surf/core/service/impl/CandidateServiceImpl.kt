@@ -14,7 +14,7 @@ import ru.surf.core.entity.Account
 import ru.surf.core.entity.Candidate
 import ru.surf.core.entity.EventState
 import ru.surf.core.entity.Trainee
-import ru.surf.core.event.ReceivingRequestKafkaEvent
+import ru.surf.core.kafkaEvents.CandidateAppliedEvent
 import ru.surf.core.mapper.candidate.CandidateMapper
 import ru.surf.core.repository.AccountRepository
 import ru.surf.core.repository.CandidateRepository
@@ -42,7 +42,19 @@ class CandidateServiceImpl(
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = [Exception::class])
     override fun createCandidate(candidateDto: CandidateDto): Candidate =
-            candidateMapper.convertFromCandidateDtoToCandidateEntity(
+        candidateMapper.convertFromCandidateDtoToCandidateEntity(
+            candidateDto,
+            // todo временно, посмотреть mapstruct
+            event = eventService.getEvent(candidateDto.eventId).apply {
+                eventStates.none {
+                    it.stateType != EventState.StateType.APPLYING
+                } && throw Exception("Candidate application phase has already ended")
+            }
+        ).also {
+            candidateRepository.run {
+                save(it)
+                flush()
+                candidateMapper.convertFromCandidateDtoToCandidateEntity(
                     candidateDto,
                     // todo временно, посмотреть mapstruct
                     event = eventService.getEvent(candidateDto.eventId).apply {
@@ -50,21 +62,26 @@ class CandidateServiceImpl(
                             it.stateType != EventState.StateType.APPLYING
                         } && throw Exception("Candidate application phase has already ended")
                     }
-            ).also {
-                candidateRepository.run {
-                    save(it)
-                    flush()
-                }
-                it.cvFileId = s3FileService.claimFile(candidateDto.cv.fileId)
-                kafkaService.sendReceivingRequestEvent(
-                        ReceivingRequestKafkaEvent(
-                                emailTo = it.email,
-                                eventName = it.event.title,
-                                firstName = it.firstName,
-                                lastName = it.lastName
+                ).also {
+                    candidateRepository.run {
+                        save(it)
+                        flush()
+                    }
+                    it.cvFileId = s3FileService.claimFile(candidateDto.cv.fileId)
+                    kafkaService.sendCoreEvent(
+                        CandidateAppliedEvent(
+                            candidateDto.email,
+                            it
                         )
-                )
+                    )
+//              kafkaService.sendCoreEvent(
+//                   NotMailEventSample(
+//                          "this is some data for other services: " + RandomStringUtils.randomAscii(10)
+//                   )
+//              )
+                }
             }
+        }
 
     @Suppress("KotlinConstantConditions")
     @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = [Exception::class])
@@ -82,30 +99,27 @@ class CandidateServiceImpl(
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = [Exception::class])
     override fun promoteCandidate(candidate: Candidate, candidatePromotionDto: CandidatePromotionDto): Account =
-            // TODO в черновом виде
-            traineeRepository.run {
-                save(Trainee(candidate = candidate)).apply {
-                    flush()
-                }
-            }.apply {
-                credentialsService.promoteCandidate(candidate.id,
-                        AccountCredentialsDto(
-                            identity = id,
-                            passphrase = candidatePromotionDto.passphrase
-                        )
-                )
+        // TODO в черновом виде
+        traineeRepository.run {
+            save(Trainee(candidate = candidate)).apply {
+                flush()
             }
+        }.apply {
+            credentialsService.promoteCandidate(
+                candidate.id,
+                AccountCredentialsDto(
+                    identity = id,
+                    passphrase = candidatePromotionDto.passphrase
+                )
+            )
+        }
 
     override fun get(candidateId: UUID): Candidate = candidateRepository.findById(candidateId).orElseThrow {
         // TODO в этой ветке ещё нет кастомных исключений, добавить позже
         Exception("candidate not found")
     }
 
-    override fun getPreferredCandidates(): Map<Candidate, List<String>> {
-        //какой-то вызов логики
-        //....
-        //Сюда будет передан список из репозитория
-       return candidateFilterService.filterCandidatesForm(listOf())
-    }
+    override fun getPreferredCandidates(eventId: UUID): Map<Candidate, List<String>> =
+        candidateRepository.getCandidatesByEventId(eventId).run { candidateFilterService.filterCandidatesForm(this) }
 
 }
