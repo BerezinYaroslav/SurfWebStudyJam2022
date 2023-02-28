@@ -7,8 +7,6 @@ import ru.surf.core.entity.Candidate
 import java.util.UUID
 
 interface CandidateRepository : JpaRepository<Candidate, UUID> {
-    @Query(
-        value = "select count(*) from candidates_events where event_id = :eventId",
-        nativeQuery = true)
+    @Query("select count(c) from Candidate c where c.event.id = :eventId")
     fun countByEventId(@Param("eventId") eventId: UUID): Int
 }
