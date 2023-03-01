@@ -6,11 +6,24 @@ create table if not exists accounts
     created_at timestamp with time zone not null
 );
 
+create table if not exists s3files
+(
+    id            uuid default gen_random_uuid() primary key,
+    content_type  varchar(255),
+    s3_key        varchar(255) unique,
+    size_in_bytes bigint,
+    s3_filename   varchar(300),
+    checksum      varchar(255),
+    expires_at    timestamp with time zone
+);
+
 create table if not exists surf_employees
 (
     id         uuid default gen_random_uuid() primary key,
     account_id uuid unique
         constraint surf_employees_accounts_account_id_fk references accounts (id),
+    s3file_id  uuid not null
+        constraint surf_employees_s3files_s3file_id_fk references s3files (id),
     name       text not null
 );
 
@@ -69,6 +82,8 @@ create table if not exists candidates
     is_approved boolean not null,
     event_id    uuid not null
         constraint candidates_events_events_event_id_fk references events (id),
+    s3file_id   uuid not null
+        constraint candidates_s3files_s3file_id_fk references s3files (id),
     unique(email, event_id)
 );
 
@@ -179,13 +194,4 @@ create table if not exists answer_variants
 );
 
 
-create table if not exists s3files
-(
-    id            uuid default gen_random_uuid() primary key,
-    content_type  varchar(255),
-    s3_key        varchar(255) unique,
-    size_in_bytes bigint,
-    s3_filename   varchar(300),
-    checksum      varchar(255),
-    expires_at    timestamp with time zone
-);
+

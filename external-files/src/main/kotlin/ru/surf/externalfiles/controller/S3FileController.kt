@@ -1,6 +1,7 @@
 package ru.surf.externalfiles.controller
 
 import org.springframework.core.io.ByteArrayResource
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
@@ -16,16 +17,21 @@ import java.util.UUID
 @RequestMapping("/files")
 class S3FileController(private val s3FacadeService: S3FacadeService) {
 
-    @PostMapping("/file")
+    @PostMapping(
+        "/file",
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
     fun uploadFile(@RequestParam(name = "file") multipartFile: MultipartFile): ResponseEntity<PostResponseDto> =
         ResponseEntity.ok(s3FacadeService.saveFile(multipartFile))
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun downloadFile(@PathVariable(name = "id") id: UUID): ResponseEntity<ByteArrayResource> {
         return ResponseEntity.ok(s3FacadeService.getFile(id))
     }
 
-    @DeleteMapping("/{id}")
-    fun deleteFile(@PathVariable(name = "id") id: UUID) = s3FacadeService.deleteFile(id)
+    @DeleteMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun deleteFile(@PathVariable(name = "id") id: UUID): ResponseEntity<Unit> =
+        ResponseEntity.ok(s3FacadeService.deleteFile(id))
 
 }

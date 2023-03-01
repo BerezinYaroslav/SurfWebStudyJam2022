@@ -1,6 +1,9 @@
 package ru.surf.core.entity
 
+import org.hibernate.annotations.Fetch
+import org.hibernate.annotations.FetchMode
 import ru.surf.core.entity.base.UUIDBasedEntity
+import ru.surf.externalfiles.entity.S3File
 import java.time.ZonedDateTime
 import java.util.*
 import javax.persistence.*
@@ -14,54 +17,59 @@ import javax.persistence.*
 @Entity
 class Candidate(
 
-        @Id
+    @Id
         @Column(name = "id")
         override val id: UUID = UUID.randomUUID(),
 
-        @Column(name = "first_name", nullable = false)
+    @Column(name = "first_name", nullable = false)
         val firstName: String = "",
 
-        @Column(name = "last_name", nullable = false)
+    @Column(name = "last_name", nullable = false)
         val lastName: String = "",
 
-        @Column(name = "university", nullable = false)
+    @Column(name = "university", nullable = false)
         val university: String = "",
 
-        @Column(name = "faculty", nullable = false)
+    @Column(name = "faculty", nullable = false)
         val faculty: String = "",
 
-        @Column(name = "course", nullable = false)
+    @Column(name = "course", nullable = false)
         val course: String = "",
 
-        @Column(name = "experience", nullable = false)
+    @Column(name = "experience", nullable = false)
         val experience: String = "",
 
-        @Column(name = "vcs", nullable = false)
+    @Column(name = "vcs", nullable = false)
         val vcs: String = "",
 
-        @Column(name = "cv_file_id", columnDefinition = "uuid", nullable = false)
+    @Column(name = "cv_file_id", columnDefinition = "uuid", nullable = false)
         var cvFileId: UUID = UUID.randomUUID(),
 
-        @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false)
         val email: String = "",
 
-        @Column(name = "telegram", nullable = false)
+    @Column(name = "telegram", nullable = false)
         val telegram: String = "",
 
-        @Column(name = "feedback", nullable = false)
+    @Column(name = "feedback", nullable = false)
         val feedback: String = "",
 
-        @Column(name = "applied_at", nullable = false)
+    @Column(name = "applied_at", nullable = false)
         val appliedAt: ZonedDateTime = ZonedDateTime.now(),
 
-        @Column(name = "is_approved", nullable = false)
+    @Column(name = "is_approved", nullable = false)
         var isApproved: Boolean = false,
 
-        @ManyToOne(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY)
+    @ManyToOne(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY)
         @JoinColumn(name = "event_id", referencedColumnName = "id", nullable = false)
         val event: Event = Event(),
 
-        ) : UUIDBasedEntity(id) {
+    @OneToMany(cascade = [CascadeType.REFRESH], fetch = FetchType.EAGER)
+        @Fetch(value = FetchMode.SUBSELECT)
+        @JoinColumn(name = "s3file_id")
+        var s3files: Set<S3File> = setOf(),
+
+    ) : UUIDBasedEntity(id) {
         override fun toString(): String {
                 return "Candidate(" +
                         "id=$id, " +
