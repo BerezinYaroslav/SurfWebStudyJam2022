@@ -1,7 +1,8 @@
 package ru.surf.core.kafkaEvents
 
 interface IMailEvent{
+    val emailType: EmailType
     val emailTo: String
-
-    fun convertToParam(): Map<*, *>
+    val subject: String
+    fun params(): Map<String, *>
 }
