@@ -10,7 +10,6 @@ import org.springframework.kafka.core.KafkaAdmin
 import org.springframework.kafka.support.serializer.JsonSerializer
 import org.testcontainers.containers.KafkaContainer
 import org.testcontainers.utility.DockerImageName
-import ru.surf.mail.model.dto.GeneralNotificationDto
 import java.util.*
 
 
@@ -27,15 +26,14 @@ class KafkaBase {
             admin.createOrModifyTopics(TopicBuilder.name(topic).partitions(3).build())
         }
 
-        fun writeToTopic(data: GeneralNotificationDto, topic: String) {
+        fun writeToTopic(data: Any, topic: String) {
             val props = Properties()
 
             props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = kafkaContainer.bootstrapServers
             props[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
             props[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = JsonSerializer::class.java
-            props[JsonSerializer.ADD_TYPE_INFO_HEADERS] = false
 
-            val producer: KafkaProducer<String, GeneralNotificationDto> = KafkaProducer(props)
+            val producer: KafkaProducer<String, Any> = KafkaProducer(props)
 
             producer.send(ProducerRecord(topic, data))
         }

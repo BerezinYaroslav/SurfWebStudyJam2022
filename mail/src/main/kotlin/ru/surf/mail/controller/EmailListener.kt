@@ -15,7 +15,6 @@ class EmailListener(
 
     @KafkaHandler
     fun listenForMailEvent(@Payload value: IMailEvent) {
-        println(value.javaClass)
         emailService.sendEmail(value)
     }
 

@@ -8,12 +8,14 @@ import org.junit.jupiter.api.extension.RegisterExtension
 import com.icegreen.greenmail.junit5.GreenMailExtension
 import org.junit.jupiter.api.Assertions.assertEquals
 import com.icegreen.greenmail.util.ServerSetup
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.springframework.test.context.ContextConfiguration
 import ru.surf.mail.model.EmailType
 import ru.surf.mail.model.dto.GeneralNotificationDto
 
-//@ContextConfiguration(classes = [KafkaTestConfig::class])
+@ContextConfiguration(classes = [KafkaTestConfig::class])
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class MailApplicationTests {
 
@@ -26,7 +28,6 @@ class MailApplicationTests {
         @JvmStatic
         @DynamicPropertySource
         fun kafkaProperties(registry: DynamicPropertyRegistry) {
-            registry.add("spring.kafka.consumer.bootstrap-servers") { KafkaBase.kafkaContainer.bootstrapServers }
             registry.add("spring.kafka.producer.bootstrap-servers") { KafkaBase.kafkaContainer.bootstrapServers }
         }
 
@@ -38,7 +39,16 @@ class MailApplicationTests {
     }
 
     @Test
-    fun `should send simple email notification`() {
+    fun `should not send notification`() {
+        KafkaBase.writeToTopic("Test", "core-topics")
+
+        Thread.sleep(2000)
+
+        assertTrue(greenMail.receivedMessages.isEmpty())
+    }
+
+    @Test
+    fun `should send accept application notification`() {
         val email = GeneralNotificationDto(
             EmailType.ACCEPT_APPLICATION,
             "test_mail@surf.ru",
@@ -48,6 +58,7 @@ class MailApplicationTests {
         KafkaBase.writeToTopic(email, "core-topics")
 
         Thread.sleep(2000)
+
         assertEquals(email.subject, greenMail.receivedMessages.first().subject)
     }
 }
