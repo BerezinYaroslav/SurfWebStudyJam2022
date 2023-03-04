@@ -9,7 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
 @EntityScan("ru.surf.core.entity")
-class AppConfig(
+class ReportModuleConfig(
     @Value("\${services.testing.url}")
     private val testingServiceUrl: String
 ) {
