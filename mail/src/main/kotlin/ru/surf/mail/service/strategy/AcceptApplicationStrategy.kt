@@ -2,15 +2,15 @@ package ru.surf.mail.service.strategy
 
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Component
-import org.thymeleaf.spring5.SpringTemplateEngine
-import ru.surf.mail.model.IMailEvent
-import ru.surf.mail.model.EmailType
+import org.thymeleaf.spring6.SpringTemplateEngine
+import ru.surf.core.kafkaEvents.IMailEvent
+import ru.surf.core.kafkaEvents.EmailType
 import ru.surf.mail.model.Template
 
 @Component
 class AcceptApplicationStrategy(
-    private val javaMailSender: JavaMailSender,
-    private val springTemplateEngine: SpringTemplateEngine,
+        private val javaMailSender: JavaMailSender,
+        private val springTemplateEngine: SpringTemplateEngine,
 ) : EmailSendStrategy {
 
     override fun emailType(): EmailType = EmailType.ACCEPT_APPLICATION

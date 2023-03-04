@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.ContextConfiguration
-import ru.surf.mail.model.EmailType
-import ru.surf.mail.model.dto.GeneralNotificationDto
+import ru.surf.core.kafkaEvents.EmailType
+import ru.surf.core.kafkaEvents.GeneralNotificationDto
 
 @ContextConfiguration(classes = [KafkaTestConfig::class])
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

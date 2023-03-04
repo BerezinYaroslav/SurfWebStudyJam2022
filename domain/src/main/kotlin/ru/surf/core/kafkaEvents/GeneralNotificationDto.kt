@@ -1,7 +1,4 @@
-package ru.surf.mail.model.dto
-
-import ru.surf.mail.model.EmailType
-import ru.surf.mail.model.IMailEvent
+package ru.surf.core.kafkaEvents
 
 data class GeneralNotificationDto(
     override val emailType: EmailType,

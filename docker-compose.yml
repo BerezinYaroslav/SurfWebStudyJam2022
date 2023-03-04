@@ -160,6 +160,19 @@ services:
       test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
       <<: *healthcheck-params
 
+  greenmail-service:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: greenmail/Dockerfile
+    ports:
+      - "3025:3025"
+      - "3143:3143"
+      - "18888:8080"
+    healthcheck:
+      test: "wget -qO - http://0.0.0.0:8080/api/service/readiness | grep '\"message\":\"Service running\"'"
+      <<: *healthcheck-params
+
   quiz-service:
     restart: unless-stopped
     build:
@@ -175,20 +188,20 @@ services:
       test: "wget -qO - http://0.0.0.0:80/actuator/health | grep '\"status\":\"UP\"'"
       <<: *healthcheck-params
 
-  defence-service:
-    restart: unless-stopped
-    build:
-      context: defenceOfProject
-      dockerfile: Dockerfile
-    image: defence
-    environment:
-      SPRING_PROFILES_ACTIVE: prod
-      PORT: 80
-    ports:
-      - "8086:80"
-    healthcheck:
-      test: "wget -qO - http://0.0.0.0:80/actuator/health | grep '\"status\":\"UP\"'"
-      <<: *healthcheck-params
+#  defence-service:
+#    restart: unless-stopped
+#    build:
+#      context: defenceOfProject
+#      dockerfile: Dockerfile
+#    image: defence
+#    environment:
+#      SPRING_PROFILES_ACTIVE: prod
+#      PORT: 80
+#    ports:
+#      - "8086:80"
+#    healthcheck:
+#      test: "wget -qO - http://0.0.0.0:80/actuator/health | grep '\"status\":\"UP\"'"
+#      <<: *healthcheck-params
 
   auth-service:
     restart: unless-stopped
@@ -223,11 +236,17 @@ services:
       context: testing
       dockerfile: Dockerfile
     image: testing
+    depends_on:
+      db-service:
+        condition: service_healthy
+      kafka-service:
+        condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: prod
       PORT: 80
       <<: *db-cred
       DB_NAME: surfwebstudyjam_testing
+      KAFKA_HOST: kafka-service:9092
     ports:
       - "8084:80"
     healthcheck:
@@ -240,13 +259,23 @@ services:
       context: mail
       dockerfile: Dockerfile
     image: mail
+    depends_on:
+      greenmail-service:
+        condition: service_healthy
+      kafka-service:
+        condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: prod
       PORT: 80
+      KAFKA_HOST: kafka-service:9092
+      SMTP_SERVER_HOST: greenmail-service
+      SMTP_SERVER_PORT: 3025
+      SENDER_EMAIL_ADDRESS: ${SENDER_EMAIL_ADDRESS}
+      SENDER_EMAIL_PASSWORD: ${SENDER_EMAIL_PASSWORD}
     ports:
       - "8083:80"
     healthcheck:
-      test: "wget -qO - http://0.0.0.0:80/actuator/health | grep '\"status\":\"UP\"'"
+      test: "wget -qO - http://0.0.0.0:80/mail/actuator/health | grep '\"status\":\"UP\"'"
       <<: *healthcheck-params
 
   report-service:
@@ -303,6 +332,8 @@ services:
     depends_on:
       db-service:
         condition: service_healthy
+      kafka-service:
+        condition: service_healthy
       auth-service:
         condition: service_healthy
       external-files-service:
@@ -315,8 +346,8 @@ services:
         condition: service_healthy
       report-service:
         condition: service_healthy
-      defence-service:
-        condition: service_healthy
+#      defence-service:
+#        condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: prod
       PORT: 80
@@ -324,7 +355,8 @@ services:
       DB_NAME: surfwebstudyjam_core
       KAFKA_HOST: kafka-service:9092
       AUTH_API: http://auth-service/credentialsServiceApi
-      EXI_FILES_API: http://external-files-service/external-files/s3FileServiceApi
+      EXT_FILES_API: http://external-files-service/external-files/s3FileServiceApi
+      EXT_FILES_RES_API: http://external-files-service/external-files/s3ResourceServiceApi
     ports:
       - "8080:80"
     healthcheck:

@@ -1,21 +1,30 @@
-package ru.surf.mail.config
+package ru.surf.mail.configuration
 
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
+import org.springframework.kafka.listener.DefaultErrorHandler
 import org.springframework.kafka.support.converter.ByteArrayJsonMessageConverter
 import org.springframework.kafka.support.converter.JsonMessageConverter
 import org.springframework.kafka.support.serializer.JsonDeserializer
+import org.springframework.util.backoff.FixedBackOff
 
 
 @Configuration
 @EnableKafka
-class KafkaConfig {
+class KafkaConfiguration(
+
+        @Value("\${spring.kafka.bootstrap-servers}")
+        private val bootstrapServers: String
+
+) {
+
     @Bean
     fun jsonMessageConverter(): JsonMessageConverter {
         return ByteArrayJsonMessageConverter()
@@ -25,7 +34,7 @@ class KafkaConfig {
     fun consumerFactory(): ConsumerFactory<String, Any> {
         return DefaultKafkaConsumerFactory(
             mapOf(
-                ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to "kafka-service:9092",
+                ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
                 ConsumerConfig.CLIENT_ID_CONFIG to "mail_service",
                 ConsumerConfig.GROUP_ID_CONFIG to "2",
                 ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to "StringDeserializer::class.java",
@@ -34,15 +43,20 @@ class KafkaConfig {
             ),
             StringDeserializer(),
             JsonDeserializer<Any>().apply {
-                addTrustedPackages("ru.surf.*")
+                addTrustedPackages("ru.surf.core.kafkaEvents")
             }
         )
     }
 
     @Bean
+    fun errorHandler(): DefaultErrorHandler =
+            DefaultErrorHandler(FixedBackOff())
+
+    @Bean
     fun kafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, Any> =
         ConcurrentKafkaListenerContainerFactory<String, Any>().apply {
             consumerFactory = consumerFactory()
+            setCommonErrorHandler(errorHandler())
         }
 
 }

@@ -1,13 +1,13 @@
 package ru.surf.mail.service.strategy
 
+import jakarta.mail.internet.MimeMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.thymeleaf.context.Context
-import org.thymeleaf.spring5.SpringTemplateEngine
-import ru.surf.mail.model.IMailEvent
-import ru.surf.mail.model.EmailType
+import org.thymeleaf.spring6.SpringTemplateEngine
+import ru.surf.core.kafkaEvents.IMailEvent
+import ru.surf.core.kafkaEvents.EmailType
 import java.nio.charset.StandardCharsets
-import javax.mail.internet.MimeMessage
 
 interface EmailSendStrategy {
     fun emailType(): EmailType

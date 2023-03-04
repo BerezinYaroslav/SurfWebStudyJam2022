@@ -2,22 +2,22 @@ package ru.surf.mail.service.strategy
 
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Component
-import org.thymeleaf.spring5.SpringTemplateEngine
-import ru.surf.mail.model.IMailEvent
-import ru.surf.mail.model.EmailType
+import org.thymeleaf.spring6.SpringTemplateEngine
+import ru.surf.core.kafkaEvents.IMailEvent
+import ru.surf.core.kafkaEvents.EmailType
 import ru.surf.mail.model.Template
-import ru.surf.mail.model.dto.CandidateEventNotificationDto
-import ru.surf.mail.model.dto.GeneralNotificationDto
+import ru.surf.core.kafkaEvents.CandidateEventNotification
+import ru.surf.core.kafkaEvents.GeneralNotificationDto
 
 @Component
 class EventStartNotificationStrategy(
-    private val javaMailSender: JavaMailSender,
-    private val springTemplateEngine: SpringTemplateEngine,
+        private val javaMailSender: JavaMailSender,
+        private val springTemplateEngine: SpringTemplateEngine,
 ) : EmailSendStrategy {
     override fun emailType(): EmailType = EmailType.EVENT_START_NOTIFICATION
 
     override fun sendEmail(email: IMailEvent) {
-        if (email is CandidateEventNotificationDto) {
+        if (email is CandidateEventNotification) {
             email.eventsName.forEach {
                 val message = createMimeMessage(
                     GeneralNotificationDto(
