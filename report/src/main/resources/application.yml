@@ -19,5 +19,7 @@ spring:
         revision_field_name: revision_id
 
 services:
+  report:
+    base_url: http://localhost:8082
   testing:
     url: localhost:8084/testing

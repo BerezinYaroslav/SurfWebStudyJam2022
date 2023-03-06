@@ -11,12 +11,14 @@ import org.springframework.web.reactive.function.client.WebClient
 @EntityScan("ru.surf.core.entity")
 class ReportModuleConfig(
     @Value("\${services.testing.url}")
-    private val testingServiceUrl: String
+    private val testingServiceUrl: String,
+    @Value("\${services.report.base_url}")
+    private val baseUrl: String
 ) {
     @Bean
     fun converterProperties(): ConverterProperties {
         val converterProperties = ConverterProperties()
-        converterProperties.baseUri = "http://localhost:8082"
+        converterProperties.baseUri = baseUrl
         return converterProperties
     }
 
