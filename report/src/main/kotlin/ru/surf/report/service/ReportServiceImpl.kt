@@ -38,7 +38,7 @@ class ReportServiceImpl(
             webClient.get()
                 .uri("/test_variant/scores/{eventId}", eventId)
                 .retrieve()
-                .awaitBody<CandidateScoresResponseDto>()
+                .awaitBody()
         }
     }
 
