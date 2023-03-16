@@ -1,14 +1,12 @@
-package ru.surf.defence.listener
+package ru.surf.meeting.listener
 
 import org.springframework.kafka.annotation.KafkaHandler
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.annotation.RetryableTopic
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
-import ru.surf.core.kafkaEvents.defence.CreateDefenceEvent
-import ru.surf.core.kafkaEvents.defence.DefenceEvent
-import ru.surf.defence.service.DefenceService
-import ru.surf.defence.service.StrategyService
+import ru.surf.core.kafkaEvents.meeting.MeetingEvent
+import ru.surf.meeting.service.StrategyService
 
 @Component
 @KafkaListener(topics = ["core-topics"])
@@ -18,7 +16,7 @@ class DefenceListener(
 
     @KafkaHandler
     @RetryableTopic
-    fun listenForDefenceEvent(@Payload event: DefenceEvent) {
+    fun listenForDefenceEvent(@Payload event: MeetingEvent) {
         strategyService.consumeEvent(event)
     }
 

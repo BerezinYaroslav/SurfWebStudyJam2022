@@ -1,4 +1,4 @@
-package ru.surf.defence.exception
+package ru.surf.core.exception.defence
 
 abstract class DefenceServiceException : RuntimeException {
 
