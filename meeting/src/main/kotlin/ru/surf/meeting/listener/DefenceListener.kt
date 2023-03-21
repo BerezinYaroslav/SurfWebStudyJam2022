@@ -17,7 +17,7 @@ class DefenceListener(
     @KafkaHandler
     @RetryableTopic
     fun listenForDefenceEvent(@Payload event: MeetingEvent) {
-        strategyService.consumeEvent(event)
+        strategyService.chooseStrategy(event)
     }
 
     @KafkaHandler(isDefault = true)
