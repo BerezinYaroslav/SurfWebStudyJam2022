@@ -1,0 +1,25 @@
+global:
+  scrape_interval: 5s
+
+  external_labels:
+    monitor: 'codelab-monitor'
+
+#Добавить остальные сервисы позже
+scrape_configs:
+  - job_name: 'mail-service'
+    scrape_interval: 5s
+    metrics_path: '/mail/actuator/prometheus'
+    static_configs:
+      - targets: [ 'host.docker.internal:8083' ]
+
+  - job_name: 'core-service'
+    scrape_interval: 5s
+    metrics_path: '/core/actuator/prometheus'
+    static_configs:
+      - targets: [ 'host.docker.internal:8080' ]
+
+  - job_name: 'meeting-service'
+    scrape_interval: 5s
+    metrics_path: '/meeting/actuator/prometheus'
+    static_configs:
+      - targets: [ 'host.docker.internal:8086' ]
