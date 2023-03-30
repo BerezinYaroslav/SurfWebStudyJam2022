@@ -1,4 +1,4 @@
-package ru.surf.report.service
+package ru.surf.report.service.impl
 
 import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Value
@@ -13,6 +13,7 @@ import org.springframework.web.reactive.function.client.awaitBody
 import ru.surf.report.model.PostResponseDto
 import ru.surf.report.model.Report
 import ru.surf.report.repository.*
+import ru.surf.report.service.ReportService
 import ru.surf.testing.sharedDto.CandidateScoresResponseDto
 import java.util.*
 
