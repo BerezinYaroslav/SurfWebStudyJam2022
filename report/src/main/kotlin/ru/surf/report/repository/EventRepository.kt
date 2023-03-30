@@ -16,7 +16,7 @@ interface EventRepository : JpaRepository<Event, UUID> {
     @Query("select e.eventStates from Event e where e.id = :eventId")
     fun getStatesById(@Param("eventId") eventId: UUID): Set<EventState>
 
-    @Modifying
+    @Modifying(flushAutomatically = true)
     @Query("update events set report_file_id = :reportFileId where id = :eventId", nativeQuery = true)
     fun updateReportFileId(@Param("reportFileId") reportFileId: UUID, @Param("eventId") eventId: UUID)
 }
