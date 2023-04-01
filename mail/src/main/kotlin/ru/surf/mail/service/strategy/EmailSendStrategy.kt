@@ -32,7 +32,7 @@ interface EmailSendStrategy {
             setSubject(email.subject)
             email.getAttachment()
                 .forEach {
-                    addAttachment("meeting.ics", ByteArrayResource(it))
+                    addAttachment(email.emailType.toString().lowercase() + ".ics", ByteArrayResource(it))
                 }
         }
         context.setVariables(email.params())
@@ -40,5 +40,5 @@ interface EmailSendStrategy {
         helper.setText(html, true)
         return message
     }
-    
+
 }

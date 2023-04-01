@@ -7,6 +7,8 @@ import net.fortuna.ical4j.model.component.VEvent
 import net.fortuna.ical4j.model.property.CalScale
 import net.fortuna.ical4j.model.property.Version
 import org.springframework.stereotype.Component
+import ru.surf.core.entity.SurfEmployee
+import ru.surf.core.entity.Trainee
 import ru.surf.core.kafkaEvents.CancelDefenceNotificationEvent
 import ru.surf.core.kafkaEvents.CreateDefenceNotificationEvent
 import ru.surf.core.kafkaEvents.EmailType
@@ -20,75 +22,103 @@ import java.time.ZoneOffset
 class DefenceMapperImpl : DefenceMapper {
 
     override fun convertCreateDefenceKafkaEventToListNotificationMailEvents(createDefenceEvent: CreateDefenceMeetingEvent):
-            List<CreateDefenceNotificationEvent> = sequence {
-        yieldAll(createDefenceEvent.candidateParticipants.map {
-            CreateDefenceNotificationEvent(
-                emailType = EmailType.DEFENCE_CREATE_NOTIFICATION,
-                emailTo = it.email,
-                subject = "Проведение защиты проекта",
-                eventName = createDefenceEvent.eventName,
-                firstName = it.candidate.firstName,
-                lastName = it.candidate.lastName,
-                zoomLink = createDefenceEvent.zoomLink,
-                attachment = listOf(createAttachment(event = createDefenceEvent))
-            )
-        })
-        yieldAll(createDefenceEvent.surfParticipants.map {
-            CreateDefenceNotificationEvent(
-                emailType = EmailType.DEFENCE_CREATE_NOTIFICATION,
-                // TODO: 25.03.2023 Убрать наследования работника от аккаунта, чтобы можно было получить почту
-                emailTo = "kir_sokolov23@mail.ru",
-                subject = "Проведение защиты проекта",
-                eventName = createDefenceEvent.eventName,
-                // TODO: 06.03.2023 Добавить в таблицу surf_employees first_name last_name
-                firstName = it.name,
-                lastName = it.name,
-                zoomLink = createDefenceEvent.zoomLink,
-                attachment = listOf(createAttachment(event = createDefenceEvent))
-            )
-        })
+            List<CreateDefenceNotificationEvent> = createDefenceEvent.candidateParticipants.map {
+        transformTraineeToCreateDefenceNotification(
+            it,
+            createDefenceEvent
+        )
+    }.toList() + createDefenceEvent.surfParticipants.map {
+        transformSurfEmployeeToCreateDefenceNotification(
+            it,
+            createDefenceEvent
+        )
     }.toList()
 
-    // TODO: 21.03.2023 Подумать над тем, как убрать дуплицирование кода
-    // TODO: 25.03.2023 Посмотреть паттерн шаблонный метод
     override fun convertCancelDefenceKafkaEventToListNotificationMailEvents(
         cancelDefenceMeetingEvent: CancelDefenceMeetingEvent
-    ): List<CancelDefenceNotificationEvent> =
-        sequence {
-            yieldAll(cancelDefenceMeetingEvent.traineeParticipants.map {
-                CancelDefenceNotificationEvent(
-                    emailType = EmailType.DEFENCE_CANCEL_NOTIFICATION,
-                    emailTo = it.email,
-                    subject = "Отмена защиты проекта",
-                    // TODO: 17.03.2023 Будет рефактор позже
-                    eventName = "Surf Study Jam",
-                    firstName = it.candidate.firstName,
-                    lastName = it.candidate.lastName,
-                )
-            })
-            yieldAll(cancelDefenceMeetingEvent.surfParticipants.map {
-                // TODO: 10.03.2023 Убрать позже хардкод переменных
-                CancelDefenceNotificationEvent(
-                    emailType = EmailType.DEFENCE_CANCEL_NOTIFICATION,
-                    emailTo = "kir_sokolov23@mail.ru",
-                    subject = "Отмена защиты проекта",
-                    eventName = "Surf Study Jam",
-                    // TODO: 06.03.2023 Добавить в таблицу surf_employees first_name last_name
-                    firstName = it.name,
-                    lastName = it.name,
-                )
-            })
-        }.toList()
+    ): List<CancelDefenceNotificationEvent> = cancelDefenceMeetingEvent.traineeParticipants.map {
+        transformTraineeToCancelDefenceNotification(
+            it,
+            cancelDefenceMeetingEvent
+        )
+    }.toList() + cancelDefenceMeetingEvent.surfParticipants.map {
+        transformSurfEmployeeToCancelDefenceNotification(
+            it,
+            cancelDefenceMeetingEvent
+        )
+    }.toList()
 
-    private fun createAttachment(event: MeetingEvent): ByteArray {
-        val startDateTimeInMillis = event.date.toInstant(ZoneOffset.UTC).toEpochMilli()
-        val endDateTimeInMillis = event.date.plusMinutes(event.duration.toLong()).toInstant(ZoneOffset.UTC).toEpochMilli()
-        return Calendar().withDefaults().withComponent(
-            VEvent(DateTime(startDateTimeInMillis), DateTime(endDateTimeInMillis), event.description)
-        ).withProperty(Version.VERSION_2_0).withProperty(CalScale.GREGORIAN).fluentTarget
-            .run {
-                this.toString().toByteArray()
-            }
-    }
+    fun transformTraineeToCreateDefenceNotification(
+        trainee: Trainee,
+        createDefenceEvent: CreateDefenceMeetingEvent
+    ): CreateDefenceNotificationEvent =
+        CreateDefenceNotificationEvent(
+            emailType = EmailType.DEFENCE_CREATE_NOTIFICATION,
+            emailTo = trainee.email,
+            subject = "Проведение защиты проекта",
+            eventName = createDefenceEvent.eventName,
+            firstName = trainee.candidate.firstName,
+            lastName = trainee.candidate.lastName,
+            zoomLink = createDefenceEvent.zoomLink,
+            attachment = listOf(createAttachment(event = createDefenceEvent))
+        )
+
+    fun transformTraineeToCancelDefenceNotification(
+        trainee: Trainee,
+        cancelDefenceMeetingEvent: CancelDefenceMeetingEvent
+    ): CancelDefenceNotificationEvent =
+        CancelDefenceNotificationEvent(
+            emailType = EmailType.DEFENCE_CANCEL_NOTIFICATION,
+            emailTo = trainee.email,
+            subject = "Отмена защиты проекта",
+            eventName = cancelDefenceMeetingEvent.title,
+            firstName = trainee.candidate.firstName,
+            lastName = trainee.candidate.lastName,
+        )
+
+    private fun transformSurfEmployeeToCreateDefenceNotification(
+        surfEmployee: SurfEmployee,
+        createDefenceEvent: CreateDefenceMeetingEvent
+    ): CreateDefenceNotificationEvent =
+        CreateDefenceNotificationEvent(
+            emailType = EmailType.DEFENCE_CREATE_NOTIFICATION,
+            // TODO: 31.03.2023 Убрать позже
+            emailTo = "aqua_agera_ls4@mail.ru",
+            subject = "Проведение защиты проекта",
+            eventName = createDefenceEvent.eventName,
+            // TODO: 06.03.2023 Добавить в таблицу surf_employees first_name last_name
+            firstName = surfEmployee.name,
+            lastName = surfEmployee.name,
+            zoomLink = createDefenceEvent.zoomLink,
+            attachment = listOf(createAttachment(event = createDefenceEvent))
+        )
+
+    private fun transformSurfEmployeeToCancelDefenceNotification(
+        surfEmployee: SurfEmployee,
+        cancelDefenceMeetingEvent: CancelDefenceMeetingEvent
+    ): CancelDefenceNotificationEvent =
+        CancelDefenceNotificationEvent(
+            emailType = EmailType.DEFENCE_CANCEL_NOTIFICATION,
+            // TODO: 31.03.2023 Убрать позже
+            emailTo = "aqua_agera_ls4@mail.ru",
+            subject = "Отмена защиты проекта",
+            eventName = cancelDefenceMeetingEvent.title,
+            // TODO: 06.03.2023 Добавить в таблицу surf_employees first_name last_name
+            firstName = surfEmployee.name,
+            lastName = surfEmployee.name,
+        )
+
+    private fun createAttachment(event: MeetingEvent): ByteArray =
+        with(event) {
+            val startDateTimeInMillis = event.date.toInstant(ZoneOffset.UTC).toEpochMilli()
+            val endDateTimeInMillis =
+                event.date.plusMinutes(event.duration.toLong()).toInstant(ZoneOffset.UTC).toEpochMilli()
+            return Calendar().withDefaults().withComponent(
+                VEvent(DateTime(startDateTimeInMillis), DateTime(endDateTimeInMillis), event.description)
+            ).withProperty(Version.VERSION_2_0).withProperty(CalScale.GREGORIAN).fluentTarget
+                .run {
+                    this.toString().toByteArray()
+                }
+        }
 
 }
