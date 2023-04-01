@@ -26,16 +26,12 @@ class ZoomWebClientConfiguration {
 
     object Properties {
         const val responseTimeout = 1000L
-
         // TODO: 05.03.2023 Убрать 20 секунд, снизив до 1-2с
         const val connectionTimeout = 20000
-
         // TODO: 05.03.2023 Убрать 20 секунд, снизив до 1-2с
         const val readTimeout = 20
-
         // TODO: 05.03.2023 Убрать 20 секунд, снизив до 1-2с
         const val writeTimeout = 20
-
         // TODO: 05.03.2023  Убрать 20 секунд, снизив до 1-2с
         const val handshakeTimeout = 20L
     }

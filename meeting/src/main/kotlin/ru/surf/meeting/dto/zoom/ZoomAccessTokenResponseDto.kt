@@ -8,11 +8,11 @@ data class ZoomAccessTokenResponseDto(
     @JsonProperty("expires_in") val expiresIn: Long,
     @JsonProperty("scope") val scope: String,
 ) {
-    val _expiresInMinutes: Int
+    val expiresInMinutes: Int
         get() = (expiresIn % 3600).div(60).toInt()
 
     override fun toString(): String {
         return "ZoomAccessTokenResponseDto(accessToken='$accessToken', tokenType='$tokenType', expiresIn=$expiresIn, scope='$scope')"
     }
-
 }
+

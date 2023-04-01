@@ -23,6 +23,7 @@ import ru.surf.meeting.exception.ZoomClientException
 import ru.surf.meeting.service.ZoomIntegrationService
 import java.time.LocalDateTime
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 @Service
 class ZoomIntegrationServiceImpl(
@@ -36,7 +37,6 @@ class ZoomIntegrationServiceImpl(
     }
 
     object ZoomUrl {
-
         object OAuth {
             const val oauthUrl = "https://zoom.us/oauth/token"
         }
@@ -45,7 +45,6 @@ class ZoomIntegrationServiceImpl(
             const val usersUrl = "https://api.zoom.us/v2/users/"
             const val meetingsUrl = "https://api.zoom.us/v2/meetings/"
         }
-
     }
 
     override fun getZoomAdminUserInformation(userId: String): ZoomAdminUserResponse {
@@ -58,13 +57,14 @@ class ZoomIntegrationServiceImpl(
                 logger.error("Exception happened:${error.message}")
                 throw ZoomClientException(error.message ?: "")
             }
-            .block().also {
+            .block()
+            .also {
                 logger.info("Zoom Admin Info:$it")
             } ?: throw RuntimeException()
     }
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 100))
-    @Scheduled(fixedRate = 3000000)
+    @Scheduled(fixedRate = 55, timeUnit = TimeUnit.MINUTES)
     override fun refreshAccessToken(): ZoomAccessTokenResponseDto {
         val multiValueMap = LinkedMultiValueMap<String, String>()
         multiValueMap["grant_type"] = "account_credentials"
@@ -85,7 +85,7 @@ class ZoomIntegrationServiceImpl(
         logger.info("Zoom Access Token is:$zoomAccessTokenResponseDto")
         logger.info(
             "Current Bearer Token is: ${zoomAdminPropertiesConfiguration.authorizationBearerToken}, expiration time: " +
-                    "${LocalDateTime.now().plusMinutes(zoomAccessTokenResponseDto._expiresInMinutes.toLong())}"
+                    "${LocalDateTime.now().plusMinutes(zoomAccessTokenResponseDto.expiresInMinutes.toLong())}"
         )
         return zoomAccessTokenResponseDto
     }

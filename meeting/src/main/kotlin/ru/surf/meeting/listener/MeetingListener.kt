@@ -16,9 +16,7 @@ class MeetingListener(
 
     @KafkaHandler
     @RetryableTopic
-    fun listenDefenceMeetingEvent(@Payload event: MeetingEvent) {
-        strategyService.chooseStrategy(event)
-    }
+    fun listenDefenceMeetingEvent(@Payload event: MeetingEvent) = strategyService.chooseStrategy(event)
 
     @KafkaHandler(isDefault = true)
     fun default() = Unit

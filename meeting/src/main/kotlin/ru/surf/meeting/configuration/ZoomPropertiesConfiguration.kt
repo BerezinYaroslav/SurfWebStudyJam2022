@@ -9,5 +9,4 @@ data class ZoomPropertiesConfiguration(
     val accountId: String,
     val clientId: String,
     val clientSecret: String
-) {
-}
+)

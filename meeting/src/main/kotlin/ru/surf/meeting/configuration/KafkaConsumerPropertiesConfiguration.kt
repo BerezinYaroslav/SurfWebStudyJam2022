@@ -8,5 +8,4 @@ class KafkaConsumerPropertiesConfiguration(
     val bootstrapServers: String,
     val groupId: String,
     val autoOffsetReset: String
-) {
-}
+)

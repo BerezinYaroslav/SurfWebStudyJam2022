@@ -22,5 +22,4 @@ data class ZoomCreateMeetingResponseDto(
         @JsonProperty("topic") val topic: String,
         @JsonProperty("type") val type: Int,
         @JsonProperty("timezone") val timezone: String,
-):java.io.Serializable {
-}
+):java.io.Serializable
