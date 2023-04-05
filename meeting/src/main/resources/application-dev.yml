@@ -1,12 +1,11 @@
 server:
   port: 8086
   servlet:
-    context-path: /defence
+    context-path: /meeting
 
 spring:
   datasource:
-    #У каждого здесь свой порт
-    url: jdbc:postgresql://localhost:5442/surf
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver

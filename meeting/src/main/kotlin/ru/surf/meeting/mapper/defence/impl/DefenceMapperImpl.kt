@@ -82,8 +82,8 @@ class DefenceMapperImpl : DefenceMapper {
     ): CreateDefenceNotificationEvent =
         CreateDefenceNotificationEvent(
             emailType = EmailType.DEFENCE_CREATE_NOTIFICATION,
-            // TODO: 31.03.2023 Убрать позже
-            emailTo = "",
+            // TODO: 31.03.2023 Убрать позже, в другом пулл реквести будет доработана модель данных
+            emailTo = surfEmployee.email,
             subject = "Проведение защиты проекта",
             eventName = createDefenceEvent.eventName,
             // TODO: 06.03.2023 Добавить в таблицу surf_employees first_name last_name
@@ -100,7 +100,7 @@ class DefenceMapperImpl : DefenceMapper {
         CancelDefenceNotificationEvent(
             emailType = EmailType.DEFENCE_CANCEL_NOTIFICATION,
             // TODO: 31.03.2023 Убрать позже
-            emailTo = "",
+            emailTo = surfEmployee.email,
             subject = "Отмена защиты проекта",
             eventName = cancelDefenceMeetingEvent.title,
             // TODO: 06.03.2023 Добавить в таблицу surf_employees first_name last_name

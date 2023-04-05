@@ -54,11 +54,9 @@ class DefenceServiceImpl(
                     duration = postRequestDefenceDto.zoomCreateMeetingRequestDto.duration,
                     candidateParticipants = traineeRepository.findAllByIdIn(postRequestDefenceDto.traineeIds),
                     // TODO: 17.03.2023 Этот список будет генерироваться другим методом
-                    surfParticipants = listOf(SurfEmployee(name = "Sergey")),
+                    surfParticipants = listOf(SurfEmployee(name = "")),
                     zoomLink = zoomLink,
-                    // TODO: 25.03.2023 Будет изменено на вызов метода ниже
-                    eventName = "Surf Study Jam"
-                    /*eventName = eventService.getEvent(postRequestDefenceDto.eventId).title*/
+                    eventName = eventService.getEvent(postRequestDefenceDto.eventId).title,
                 )
             )
             defenceRepository.save(this).also {
@@ -67,12 +65,6 @@ class DefenceServiceImpl(
                 defenceMapper.convertFromDefenceEntityToPostResponseEntityDto(this)
             }
         }
-
-    override fun findDefence(id: UUID): Defence {
-        val defenceFromDb = defenceRepository.findByIdOrNull(id) ?: throw DefenceNotFoundByIdException(id)
-        logger.info("Successfully getting defence with id $id")
-        return defenceFromDb
-    }
 
     override fun deleteDefence(id: UUID) {
         val defenceFromDb = findDefence(id)
@@ -85,19 +77,21 @@ class DefenceServiceImpl(
                 traineeParticipants = listOf(
                     Trainee(
                         Candidate(
-                            firstName = "Kirill",
-                            lastName = "Sokolov",
-                            email = "aqua_agera_ls4@mail.ru"
                         )
                     )
                 ),
                 // TODO: 25.03.2023 Достать все всех работников в соответствии с командой позже
-                // нужны связи между сущностями
-                surfParticipants = listOf(SurfEmployee(name = "Sergey")),
+                surfParticipants = listOf(SurfEmployee(name = "")),
                 zoomMeetingId = defenceFromDb.zoomMeetingId
             )
         )
         defenceRepository.delete(defenceFromDb)
+    }
+
+    override fun findDefence(id: UUID): Defence {
+        val defenceFromDb = defenceRepository.findByIdOrNull(id) ?: throw DefenceNotFoundByIdException(id)
+        logger.info("Successfully getting defence with id $id")
+        return defenceFromDb
     }
 
     override fun deleteDefenceByMeetingId(zoomMeetingId: Long) =
