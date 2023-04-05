@@ -83,7 +83,7 @@ class DefenceMapperImpl : DefenceMapper {
         CreateDefenceNotificationEvent(
             emailType = EmailType.DEFENCE_CREATE_NOTIFICATION,
             // TODO: 31.03.2023 Убрать позже
-            emailTo = "",
+            emailTo = "telepuz888@gmail.com",
             subject = "Проведение защиты проекта",
             eventName = createDefenceEvent.eventName,
             // TODO: 06.03.2023 Добавить в таблицу surf_employees first_name last_name

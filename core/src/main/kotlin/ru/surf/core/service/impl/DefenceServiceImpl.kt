@@ -52,13 +52,14 @@ class DefenceServiceImpl(
                     description = postRequestDefenceDto.description,
                     date = postRequestDefenceDto.date,
                     duration = postRequestDefenceDto.zoomCreateMeetingRequestDto.duration,
-                    candidateParticipants = traineeRepository.findAllByIdIn(postRequestDefenceDto.traineeIds),
+                    /*candidateParticipants = traineeRepository.findAllByIdIn(postRequestDefenceDto.traineeIds)*/
                     // TODO: 17.03.2023 Этот список будет генерироваться другим методом
                     surfParticipants = listOf(SurfEmployee(name = "Sergey")),
                     zoomLink = zoomLink,
                     // TODO: 25.03.2023 Будет изменено на вызов метода ниже
-                    eventName = "Surf Study Jam"
+                    eventName = "Surf Study Jam",
                     /*eventName = eventService.getEvent(postRequestDefenceDto.eventId).title*/
+                    candidateParticipants = listOf(Trainee(Candidate(email = "")))
                 )
             )
             defenceRepository.save(this).also {
