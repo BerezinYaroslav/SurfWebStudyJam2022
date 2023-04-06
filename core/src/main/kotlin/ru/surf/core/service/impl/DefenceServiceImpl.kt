@@ -6,18 +6,20 @@ import org.springframework.stereotype.Service
 import ru.surf.core.dto.defence.PostRequestDefenceDto
 import ru.surf.core.dto.defence.PostResponseDefenceDto
 import ru.surf.core.entity.Candidate
-import ru.surf.core.exception.defence.DefenceNotFoundByMeetingIdException
-import ru.surf.core.mapper.defence.DefenceMapper
-import ru.surf.core.repository.DefenceRepository
-import ru.surf.core.service.*
 import ru.surf.core.entity.Defence
 import ru.surf.core.entity.SurfEmployee
 import ru.surf.core.entity.Trainee
 import ru.surf.core.exception.defence.DefenceCreationFailedException
 import ru.surf.core.exception.defence.DefenceNotFoundByIdException
+import ru.surf.core.exception.defence.DefenceNotFoundByMeetingIdException
 import ru.surf.core.kafkaEvents.meeting.CancelDefenceMeetingEvent
 import ru.surf.core.kafkaEvents.meeting.CreateDefenceMeetingEvent
+import ru.surf.core.mapper.defence.DefenceMapper
+import ru.surf.core.repository.DefenceRepository
 import ru.surf.core.repository.TraineeRepository
+import ru.surf.core.service.DefenceService
+import ru.surf.core.service.EventService
+import ru.surf.core.service.KafkaService
 import ru.surf.meeting.service.ZoomIntegrationService
 import java.util.*
 
@@ -28,7 +30,7 @@ class DefenceServiceImpl(
     private val defenceRepository: DefenceRepository,
     private val eventService: EventService,
     private val zoomIntegrationService: ZoomIntegrationService,
-    private val traineeRepository: TraineeRepository
+    private val traineeRepository: TraineeRepository,
 ) : DefenceService {
 
     companion object Logger {
@@ -111,3 +113,4 @@ class DefenceServiceImpl(
     }
 
 }
+
