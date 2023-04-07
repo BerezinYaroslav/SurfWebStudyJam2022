@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import ru.surf.core.entity.Candidate
-import ru.surf.core.entity.Event
 import java.util.UUID
 
 

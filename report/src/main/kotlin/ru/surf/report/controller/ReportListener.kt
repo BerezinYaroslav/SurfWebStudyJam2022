@@ -10,7 +10,7 @@ import ru.surf.report.service.EventReportService
 import ru.surf.report.service.ReportWrapper
 
 
-//@Component
+@Component
 @KafkaListener(topics = ["core-topics"])
 class ReportListener(
     private val eventReportService: EventReportService,
