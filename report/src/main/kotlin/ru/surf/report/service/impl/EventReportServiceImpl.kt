@@ -13,12 +13,12 @@ import org.springframework.web.reactive.function.client.awaitBody
 import ru.surf.report.model.PostResponseDto
 import ru.surf.report.model.Report
 import ru.surf.report.repository.*
-import ru.surf.report.service.ReportService
+import ru.surf.report.service.EventReportService
 import ru.surf.testing.sharedDto.CandidateScoresResponseDto
 import java.util.*
 
 @Service
-class ReportServiceImpl(
+class EventReportServiceImpl(
     private val teamRepository: TeamRepository,
     private val eventRepository: EventRepository,
     private val candidateRepository: CandidateRepository,
@@ -29,7 +29,7 @@ class ReportServiceImpl(
     private val testingServiceUrl: String,
     @Value("\${services.external-files.url}")
     private val externalFilesServiceUrl: String,
-) : ReportService {
+) : EventReportService {
     private lateinit var testResults: CandidateScoresResponseDto
 
     override fun getReport(eventId: UUID): Report {
@@ -50,7 +50,7 @@ class ReportServiceImpl(
     override fun saveReport(reportByteArray: ByteArray, eventId: UUID) {
         val builder = MultipartBodyBuilder()
         builder.part("file", ByteArrayResource(reportByteArray))
-            .filename("Report.pdf")
+            .filename("EventReport_${eventId}.pdf")
             .contentType(MediaType.APPLICATION_PDF)
 
         val response: PostResponseDto = runBlocking {
@@ -81,7 +81,7 @@ class ReportServiceImpl(
             2 to 0,
             3 to 0
         )
-        testResults.scores.forEach() {
+        testResults.scores.forEach {
             when (it.score ?: 0.0) {
                 in 0.00..0.25 -> resultsByGroup[0] = resultsByGroup[0]!! + 1
                 in 0.26..0.50 -> resultsByGroup[1] = resultsByGroup[1]!! + 1

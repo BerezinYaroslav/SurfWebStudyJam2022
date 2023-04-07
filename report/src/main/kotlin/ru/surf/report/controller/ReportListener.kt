@@ -6,14 +6,14 @@ import org.springframework.kafka.annotation.RetryableTopic
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
 import ru.surf.core.kafkaEvents.EndingEvent
-import ru.surf.report.service.ReportService
+import ru.surf.report.service.EventReportService
 import ru.surf.report.service.ReportWrapper
 
 
-@Component
+//@Component
 @KafkaListener(topics = ["core-topics"])
 class ReportListener(
-    private val reportService: ReportService,
+    private val eventReportService: EventReportService,
     private val reportWrapper: ReportWrapper
 ) {
 
@@ -21,10 +21,10 @@ class ReportListener(
     @RetryableTopic
     fun onEndingEvent(@Payload value: EndingEvent) {
         val report = reportWrapper.wrap(
-            reportService.getReport(value.eventId)
+            eventReportService.getReport(value.eventId)
         )
 
-        reportService.saveReport(report, value.eventId)
+        eventReportService.saveReport(report, value.eventId)
     }
 
     @KafkaHandler(isDefault = true)

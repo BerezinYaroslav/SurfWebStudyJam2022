@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import ru.surf.core.entity.Event
 import ru.surf.core.entity.EventState
+import ru.surf.core.entity.EventTag
 import java.util.*
 
 
@@ -19,4 +20,7 @@ interface EventRepository : JpaRepository<Event, UUID> {
     @Modifying(flushAutomatically = true)
     @Query("update events set report_file_id = :reportFileId where id = :eventId", nativeQuery = true)
     fun updateReportFileId(@Param("reportFileId") reportFileId: UUID, @Param("eventId") eventId: UUID)
+
+    @Query("select e.eventTags from Event e")
+    fun getEventTags(eventId: UUID): Set<EventTag>
 }
