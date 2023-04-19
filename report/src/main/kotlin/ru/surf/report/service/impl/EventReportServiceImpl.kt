@@ -11,7 +11,7 @@ import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 import ru.surf.report.model.PostResponseDto
-import ru.surf.report.model.Report
+import ru.surf.report.model.EventReport
 import ru.surf.report.repository.*
 import ru.surf.report.service.EventReportService
 import ru.surf.testing.sharedDto.CandidateScoresResponseDto
@@ -32,18 +32,18 @@ class EventReportServiceImpl(
 ) : EventReportService {
     private lateinit var testResults: CandidateScoresResponseDto
 
-    override fun getReport(eventId: UUID): Report {
-        val report = Report()
+    override fun getReport(eventId: UUID): EventReport {
+        val eventReport = EventReport()
 
         getTestResult(eventId)
 
-        report.eventDescription = eventRepository.getDescriptionById(eventId)
-        report.eventStates = eventRepository.getStatesById(eventId)
-        report.peopleAmountByStates = getPeopleAmountByState(eventId)
-        report.testResults = getTestResultsByGroup()
-        report.teamResults = getTeamsWithAvgScore(eventId)
+        eventReport.eventDescription = eventRepository.getDescriptionById(eventId)
+        eventReport.eventStates = eventRepository.getStatesById(eventId)
+        eventReport.peopleAmountByStates = getPeopleAmountByState(eventId)
+        eventReport.testResults = getTestResultsByGroup()
+        eventReport.teamResults = getTeamsWithAvgScore(eventId)
 
-        return report
+        return eventReport
     }
 
     @Transactional

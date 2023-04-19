@@ -23,7 +23,7 @@ class ReportController(
 
     @GetMapping("event/{event_id}")
     fun getEventReport(@PathVariable(name = "event_id") eventId: UUID): ResponseEntity<ByteArray> {
-        val report = reportWrapper.wrap(
+        val report = reportWrapper.wrapToEventReport(
             eventReportService.getReport(eventId)
         )
 
@@ -32,9 +32,11 @@ class ReportController(
             .body(report)
     }
 
-    @GetMapping("candidate/{event_id}")
+    @GetMapping("event/{event_id}/candidates")
     fun getTraineeReport(@PathVariable(name = "event_id") eventId: UUID): ResponseEntity<ByteArray> {
-        val report = candidateReportService.getReport(eventId)
+        val report = reportWrapper.wrapToCandidatesReport(
+            candidateReportService.getReport(eventId)
+        )
 
         val header = HttpHeaders()
         header.contentType = MediaType("application", "force-download")

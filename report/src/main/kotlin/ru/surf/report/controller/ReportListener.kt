@@ -20,7 +20,7 @@ class ReportListener(
     @KafkaHandler
     @RetryableTopic
     fun onEndingEvent(@Payload value: EndingEvent) {
-        val report = reportWrapper.wrap(
+        val report = reportWrapper.wrapToEventReport(
             eventReportService.getReport(value.eventId)
         )
 
