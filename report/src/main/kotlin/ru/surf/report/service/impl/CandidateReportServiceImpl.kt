@@ -1,25 +1,13 @@
 package ru.surf.report.service.impl
 
-import kotlinx.coroutines.runBlocking
-import org.apache.poi.xssf.usermodel.XSSFWorkbook
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.io.ByteArrayResource
-import org.springframework.http.MediaType
-import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Service
-import org.springframework.web.reactive.function.BodyInserters
-import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.awaitBody
-import ru.surf.core.entity.Candidate
 import ru.surf.report.model.CandidateExcelDto
 import ru.surf.report.model.CandidatesReport
-import ru.surf.report.model.PostResponseDto
 import ru.surf.report.repository.CandidateRepository
 import ru.surf.report.repository.EventRepository
 import ru.surf.report.repository.TraineeRepository
 import ru.surf.report.service.CandidateReportService
-import java.io.ByteArrayOutputStream
-import java.util.UUID
+import java.util.*
 
 @Service
 class CandidateReportServiceImpl(

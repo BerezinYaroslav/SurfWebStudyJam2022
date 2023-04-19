@@ -6,7 +6,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.stereotype.Service
 import org.thymeleaf.context.Context
 import org.thymeleaf.spring6.SpringTemplateEngine
-import ru.surf.core.entity.Candidate
 import ru.surf.report.model.CandidateExcelDto
 import ru.surf.report.model.CandidatesReport
 import ru.surf.report.model.EventReport
