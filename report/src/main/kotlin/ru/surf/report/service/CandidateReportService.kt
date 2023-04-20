@@ -5,4 +5,5 @@ import java.util.UUID
 
 interface CandidateReportService {
     fun getReport(eventId: UUID): CandidatesReport
+    fun saveReport(reportByteArray: ByteArray, eventId: UUID)
 }
