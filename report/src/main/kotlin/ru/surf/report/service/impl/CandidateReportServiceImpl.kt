@@ -24,7 +24,6 @@ class CandidateReportServiceImpl(
     private val externalFilesServiceUrl: String,
 ) : CandidateReportService {
     override fun getReport(eventId: UUID): CandidatesReport {
-        println("from get report")
         return CandidatesReport(
             eventId = eventId,
             candidates = getCandidates(eventId)

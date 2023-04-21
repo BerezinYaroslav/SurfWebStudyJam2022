@@ -22,7 +22,6 @@ class ReportListener(
     @KafkaHandler
     @RetryableTopic
     fun onEndingEvent(@Payload value: EndingEvent) {
-        println("Foooo")
         val eventReport = reportWrapper.wrapToEventReport(
             eventReportService.getReport(value.eventId)
         )
@@ -36,7 +35,5 @@ class ReportListener(
     }
 
     @KafkaHandler(isDefault = true)
-    fun default() {
-        println("Yoooo")
-    }
+    fun default() = Unit
 }
