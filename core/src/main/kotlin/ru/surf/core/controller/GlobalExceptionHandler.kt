@@ -25,10 +25,19 @@ class GlobalExceptionHandler {
         val errorDto = ErrorDto(exception.exceptionType.toString(), exception.message, LocalDateTime.now())
         return ResponseEntity(errorDto, HttpStatus.NOT_FOUND)
     }
+
     @ExceptionHandler(DefenceCreationFailedException::class)
     fun handleDefenceCreationFailedException(exception: DefenceCreationFailedException): ResponseEntity<ErrorDto> {
         val errorDto = ErrorDto(exception.exceptionType.toString(), exception.message, LocalDateTime.now())
         return ResponseEntity(errorDto, HttpStatus.INTERNAL_SERVER_ERROR)
     }
+
+   /* @ExceptionHandler(ObjectOptimisticLockingFailureException::class)
+    fun handleOptimisticLockExceptionException(
+        exception: ObjectOptimisticLockingFailureException,
+    ): ResponseEntity<ErrorDto> {
+        val errorDto = ErrorDto(exception.toString(), "CONCURRENT UPDATE FAILED", LocalDateTime.now())
+        return ResponseEntity(errorDto, HttpStatus.INTERNAL_SERVER_ERROR)
+    }*/
 
 }
