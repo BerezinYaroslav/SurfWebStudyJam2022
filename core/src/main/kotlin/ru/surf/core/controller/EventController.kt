@@ -11,7 +11,6 @@ import ru.surf.core.dto.event.PostRequestEventDto
 import ru.surf.core.dto.event.PutRequestEventDto
 import ru.surf.core.dto.event.ShortResponseEventDto
 import ru.surf.core.entity.Candidate
-import ru.surf.core.kafkaEvents.meeting.CardResponseDto
 import ru.surf.core.mapper.event.EventMapper
 import ru.surf.core.service.CandidateService
 import ru.surf.core.service.EventService

@@ -17,6 +17,6 @@ class CardMapperImpl : CardMapper {
             googleDriveStorageLink = projectCard.projectInfo.googleDriveLink,
             usefulDocumentationLink = projectCard.projectInfo.usefulResourcesLink,
             projectNote = projectCard.projectNote,
-            /*version = projectCard.version*/
+            version = projectCard.version
         )
 }
