@@ -9,6 +9,6 @@ data class ProjectCardResponseDto(
     val googleDriveStorageLink: String,
     val usefulDocumentationLink: String,
     val projectNote: String,
-    val version: Long,
+   /* val version: Long,*/
 )
 

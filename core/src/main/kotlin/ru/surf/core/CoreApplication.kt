@@ -21,19 +21,17 @@ class CoreApplication(val cardService: ProjectCardServiceImpl) : CommandLineRunn
         val executor = Executors.newFixedThreadPool(2)
         executor.submit(Callable {
             try {
-                Thread.sleep(2_000)
                 cardService.updateProjectCard(id, card)
             } catch (e: Exception) {
-                println("Исключение возникло при 1 вызове")
+                println("Exception from 1 call")
                 e.printStackTrace()
             }
         })
         executor.submit(Callable {
             try {
-                Thread.sleep(2_000)
-                cardService.updateProjectCard(id, card2)
+                cardService.updateProjectCard2(id, card2)
             } catch (e: Exception) {
-                println("Исключение возникло при 2 вызове")
+                println("Exception from 2 call")
                 e.printStackTrace()
             }
         })

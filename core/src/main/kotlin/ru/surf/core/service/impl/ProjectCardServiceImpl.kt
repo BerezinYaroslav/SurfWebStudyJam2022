@@ -31,6 +31,17 @@ class ProjectCardServiceImpl(
             this.id
         }
 
+    @Transactional
+     fun updateProjectCard2(id: UUID, putRequestCardDto: PutRequestCardDto): UUID =
+        getProjectCardFromDb(id).apply {
+            println("Get version: $this")
+            this.title = "oops"
+            println("Version from request: ${putRequestCardDto.version}")
+            Thread.sleep(1_000)
+        }.run {
+            this.id
+        }
+
     private fun getProjectCardFromDb(id: UUID) = projectCardRepository.findByIdOrNull(id) ?: throw RuntimeException("NO CARD WITH ID $id")
 
 }

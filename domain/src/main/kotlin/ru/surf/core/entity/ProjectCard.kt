@@ -1,12 +1,15 @@
 package ru.surf.core.entity
 
 import jakarta.persistence.*
+import org.hibernate.annotations.DynamicUpdate
 import org.hibernate.annotations.OptimisticLockType
 import org.hibernate.annotations.OptimisticLocking
 import ru.surf.core.entity.base.UUIDBasedEntity
 import java.util.*
 
 @Table(name = "projects_cards")
+@DynamicUpdate
+@OptimisticLocking(type = OptimisticLockType.DIRTY)
 @Entity
 class ProjectCard(
 
@@ -20,9 +23,6 @@ class ProjectCard(
     @Column(name = "project_note", nullable = false, unique = true)
     var projectNote: String = "",
 
-    @Version
-    var version: Long = 0,
-
     @OneToOne(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY)
     @JoinColumn(name = "project_info_id", referencedColumnName = "id", nullable = false)
     val projectInfo: ProjectInfo = ProjectInfo()
@@ -30,6 +30,6 @@ class ProjectCard(
 ) : UUIDBasedEntity(id) {
 
     override fun toString(): String {
-        return "ProjectCard(id=$id, title='$title', projectNote='$projectNote', version=$version)"
+        return "ProjectCard(id=$id, title='$title', projectNote='$projectNote')"
     }
 }
