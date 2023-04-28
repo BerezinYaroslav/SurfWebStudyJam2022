@@ -26,7 +26,6 @@ export class ProjectCardComponent implements OnInit {
     this.projectCard$.subscribe(result => {
         this.projectNote = result.projectNote
         this.version = result.version
-        console.log(`Значение карточки при инициализации компонента ${this.version}`)
       },
       error => {
         console.log(`ERROR ${error.message}`)

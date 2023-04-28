@@ -34,7 +34,7 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ObjectOptimisticLockingFailureException::class)
-    fun handleOptimisticLockExceptionException(
+    fun handleObjectOptimisticLockingFailureException(
         exception: ObjectOptimisticLockingFailureException,
     ): ResponseEntity<ErrorDto> {
         val message = "CONCURRENT UPDATE FAILED"

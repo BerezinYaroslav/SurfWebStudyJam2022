@@ -13,12 +13,11 @@ class ProjectCardController(private val cardService: ProjectCardService) {
 
     @GetMapping("/{id}/card")
     fun getCard(@PathVariable(name = "id") eventId: UUID): ResponseEntity<ProjectCardResponseDto> =
-        ResponseEntity.ok(cardService.getProjectCard(eventId)).also { println(it.body) }
+        ResponseEntity.ok(cardService.getProjectCard(eventId))
 
     @PutMapping("/{id}")
     fun updateCard(
         @PathVariable(name = "id") eventId: UUID, @RequestBody putRequestCardDto: PutRequestCardDto
     ): ResponseEntity<UUID> =
         ResponseEntity.ok(cardService.updateProjectCard(eventId, putRequestCardDto))
-
 }
