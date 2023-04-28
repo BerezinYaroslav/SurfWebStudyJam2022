@@ -22,30 +22,13 @@ class ProjectCardServiceImpl(
 
     @Transactional
     override fun updateProjectCard(id: UUID, putRequestCardDto: PutRequestCardDto): UUID =
-        getProjectPessimisticReadCardFromDb(id).apply {
-            println("Get version: $this")
+        getProjectCardFromDb(id).apply {
             this.projectNote = putRequestCardDto.projectNote
-            println("Version from request: ${putRequestCardDto.version}")
-            Thread.sleep(1_000)
         }.run {
             this.id
         }
 
-    @Transactional
-     fun updateProjectCard2(id: UUID, putRequestCardDto: PutRequestCardDto): UUID =
-        getProjectPessimisticWriteCardFromDb(id).apply {
-            println("Get version: $this")
-            this.title = "oops"
-            println("Version from request: ${putRequestCardDto.version}")
-            Thread.sleep(1_000)
-        }.run {
-            this.id
-        }
-
-    private fun getProjectCardFromDb(id: UUID) = projectCardRepository.findByIdOrNull(id) ?: throw RuntimeException("NO CARD WITH ID $id")
-
-    private fun getProjectPessimisticReadCardFromDb(id: UUID) = projectCardRepository.findWithPessimisticReadLockingById(id) ?: throw RuntimeException("NO CARD WITH ID $id")
-
-    private fun getProjectPessimisticWriteCardFromDb(id: UUID) = projectCardRepository.findWithPessimisticWriteLockingById(id) ?: throw RuntimeException("NO CARD WITH ID $id")
+    private fun getProjectCardFromDb(id: UUID) =
+        projectCardRepository.findByIdOrNull(id) ?: throw RuntimeException("NO CARD WITH ID $id")
 
 }

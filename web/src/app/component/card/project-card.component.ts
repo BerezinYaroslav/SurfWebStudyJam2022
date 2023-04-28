@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ProjectCard} from "../../entity/project-card";
-import {catchError, ignoreElements, Observable, of, throwError} from "rxjs";
+import {Observable} from "rxjs";
 import {ProjectCardService} from "../../service/project-card.service";
 import {FormControl, FormGroup} from "@angular/forms";
 

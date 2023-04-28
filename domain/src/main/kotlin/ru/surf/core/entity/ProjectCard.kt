@@ -1,8 +1,6 @@
 package ru.surf.core.entity
 
 import jakarta.persistence.*
-import org.hibernate.annotations.OptimisticLockType
-import org.hibernate.annotations.OptimisticLocking
 import ru.surf.core.entity.base.UUIDBasedEntity
 import java.util.*
 
