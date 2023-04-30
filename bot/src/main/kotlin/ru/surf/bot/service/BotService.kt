@@ -5,12 +5,14 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import ru.surf.bot.configuration.BotConfigurationProperties
+import ru.surf.bot.dto.GithubWebHookDto
 import ru.surf.core.kafkaEvents.bot.BotEvent
 
 @Service
 class BotService(
     private val botConfigurationProperties: BotConfigurationProperties,
-    private val strategyHandler: StrategyHandler
+    private val kafkaStrategyHandler: KafkaStrategyHandler,
+    private val githubWebhookHandler: GithubWebhookHandler
 ) : TelegramLongPollingBot(botConfigurationProperties.token) {
 
     override fun getBotUsername(): String = botConfigurationProperties.botName
@@ -26,12 +28,9 @@ class BotService(
                 val messageText = message.text
                 when {
                     messageText == "/start" -> "Привет, я бот-помощник компании Surf!"
-                    messageText == "1" -> "Че как"
-                    messageText == "2" -> "Ыыы"
-//                    messageText.startsWith("Кнопка ") -> "Вы нажали кнопку"
                     else -> "Вы написали: *$messageText*"
                 }
-            } else "Я понимаю только текст"
+            } else "Я понимаю только текст."
             sendAnswer(neededChat, responseText)
         }
     }
@@ -40,6 +39,15 @@ class BotService(
         SendMessage(neededChat, answer).also { execute(it) }
 
     fun sendGeneralNotification(botEvent: BotEvent) =
-        SendMessage(neededChat, strategyHandler.chooseStrategy(botEvent)) .also { execute(it) }
+        SendMessage(neededChat, kafkaStrategyHandler.chooseNotificationStrategy(botEvent)).also { execute(it) }
+
+    fun sendWebhookNotification(githubWebHookDto: GithubWebHookDto) {
+        val botMessage = githubWebhookHandler.chooseActionStrategy(
+            githubWebHookDto.action
+        ) + "\n" + "Ссылка: ${githubWebHookDto.pullRequestDto.url}"
+        SendMessage(neededChat, botMessage).also {
+            execute(it)
+        }
+    }
 
 }

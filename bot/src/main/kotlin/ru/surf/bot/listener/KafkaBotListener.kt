@@ -12,18 +12,18 @@ import ru.surf.core.kafkaEvents.bot.BotEvent
 
 @Component
 @KafkaListener(topics = ["core-topics"])
-class KafkaListener(private val botService: BotService) {
+class KafkaBotListener(private val botService: BotService) {
 
-    companion object EmailListener {
-        val logger: Logger = LoggerFactory.getLogger(EmailListener::class.java)
+    companion object {
+        val logger: Logger = LoggerFactory.getLogger(ru.surf.bot.listener.KafkaBotListener::class.java)
     }
 
     @KafkaHandler
     @RetryableTopic
-    fun listenForMailEvent(@Payload botEvent: BotEvent) {
+    fun listenForBotEvent(@Payload botEvent: BotEvent) {
         botService.sendGeneralNotification(botEvent)
         logger.info(
-            "Sent mail event ${botEvent::class.qualifiedName} " + " params=[${botEvent.params()}]"
+            "Sent bot event ${botEvent::class.qualifiedName} " + " params=[${botEvent.params()}]"
         )
     }
 

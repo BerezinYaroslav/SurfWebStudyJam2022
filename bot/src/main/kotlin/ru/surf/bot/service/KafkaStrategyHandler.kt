@@ -7,9 +7,9 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Component
-class StrategyHandler {
+class KafkaStrategyHandler {
 
-    fun chooseStrategy(botEvent: BotEvent): String =
+    fun chooseNotificationStrategy(botEvent: BotEvent): String =
         when (botEvent) {
             is CreateDefenceNotificationBot -> "Назначена защита ${botEvent.eventName} \n" +
                     "Дата проведения: ${
