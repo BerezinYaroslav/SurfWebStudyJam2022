@@ -28,6 +28,9 @@ class BotService(
                 val messageText = message.text
                 when {
                     messageText == "/start" -> "Привет, я бот-помощник компании Surf!"
+                    messageText == "/help" -> "Чтобы начать работу с ботом, введи команду /start \n" +
+                            "Чтобы получить все нужные командные и проектные ссылки, введи команду /about"
+                    messageText == "/about" -> "Необходимые ссылки:"
                     else -> "Вы написали: *$messageText*"
                 }
             } else "Я понимаю только текст."
