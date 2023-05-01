@@ -26,11 +26,12 @@ class BotService(
             neededChat = chatId.toString()
             val responseText = if (message.hasText()) {
                 val messageText = message.text
+                val botName = "@surf_helper_bot"
                 when {
-                    messageText == "/start" -> "Привет, я бот-помощник компании Surf!"
-                    messageText == "/help" -> "Чтобы начать работу с ботом, введи команду /start \n" +
+                    messageText == "/start" || messageText == "/start$botName" -> "Привет, я бот-помощник компании Surf!"
+                    messageText == "/help" || messageText == "/help$botName" -> "Чтобы начать работу с ботом, введи команду /start \n" +
                             "Чтобы получить все нужные командные и проектные ссылки, введи команду /about"
-                    messageText == "/about" -> "Необходимые ссылки:"
+                    messageText == "/about" || messageText == "/about$botName" -> "Необходимые ссылки:"
                     else -> "Вы написали: *$messageText*"
                 }
             } else "Я понимаю только текст."
