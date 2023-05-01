@@ -12,12 +12,19 @@ import ru.surf.core.kafkaEvents.bot.BotEvent
 class BotService(
     private val botConfigurationProperties: BotConfigurationProperties,
     private val kafkaStrategyHandler: KafkaStrategyHandler,
-    private val githubWebhookHandler: GithubWebhookHandler
+    private val githubWebhookHandler: GithubWebhookHandler,
 ) : TelegramLongPollingBot(botConfigurationProperties.token) {
 
     override fun getBotUsername(): String = botConfigurationProperties.botName
 
     var neededChat: String = ""
+
+    val links = mapOf(
+        "git" to "https://github.com/YaroslavBerezin/SurfWebStudyJam2022",
+        "miro" to "https://miro.com/app/board/uXjVPTVg2R8=/",
+        "trello" to "https://trello.com/b/UUQZlmxH/surf-web-study-jam-2022",
+        "google_docs" to "https://docs.google.com/document/d/1Lxq5a39EBQbMWc3EKpothfJkTCVJRXiW518L4vDBUcM/edit"
+    )
 
     override fun onUpdateReceived(update: Update) {
         if (update.hasMessage()) {
@@ -31,10 +38,14 @@ class BotService(
                     messageText == "/start" || messageText == "/start$botName" -> "Привет, я бот-помощник компании Surf!"
                     messageText == "/help" || messageText == "/help$botName" -> "Чтобы начать работу с ботом, введи команду /start \n" +
                             "Чтобы получить все нужные командные и проектные ссылки, введи команду /about"
-                    messageText == "/about" || messageText == "/about$botName" -> "Необходимые ссылки:"
-                    else -> "Вы написали: *$messageText*"
+                    messageText == "/about" || messageText == "/about$botName" -> "Ссылки на проект \n" + "\n" +
+                            "Github: " + "\n" + "${links["git"]} \n" +
+                            "Miro: " + "\n" + "${links["miro"]} \n" +
+                            "Trello: " + "\n" + "${links["trello"]} \n" +
+                            "Полезные ссылки: " + "\n" + "${links["google_docs"]} \n"
+                    else -> "Команды *$messageText* я не знаю"
                 }
-            } else "Я понимаю только текст."
+            } else "Я понимаю только текст"
             sendAnswer(neededChat, responseText)
         }
     }
@@ -53,5 +64,4 @@ class BotService(
             execute(it)
         }
     }
-
 }

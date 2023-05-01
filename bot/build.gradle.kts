@@ -17,14 +17,17 @@ repositories {
 
 dependencies {
     val telegramBotsStarter = "6.5.0"
+    val logbackEncoderVersion = "7.3"
 
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.micrometer:micrometer-registry-prometheus")
+    implementation("net.logstash.logback:logstash-logback-encoder:$logbackEncoderVersion")
     implementation("org.telegram:telegrambots-spring-boot-starter:$telegramBotsStarter")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.springframework.kafka:spring-kafka")
-
     implementation(project(":domain"))
 }
 
